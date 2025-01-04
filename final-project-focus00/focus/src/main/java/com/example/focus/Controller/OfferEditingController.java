@@ -1,5 +1,6 @@
 package com.example.focus.Controller;
 
+import com.example.focus.ApiResponse.ApiResponse;
 import com.example.focus.DTO.OfferEditingInputDTO;
 import com.example.focus.DTO.OfferEditingOutputDTO;
 import com.example.focus.Service.OfferEditingService;
@@ -17,33 +18,33 @@ public class OfferEditingController {
 
     private final OfferEditingService offerEditingService;
 
-    @PostMapping
-    public ResponseEntity createOffer(@RequestBody @Valid OfferEditingInputDTO offerEditingInputDTO) {
-        OfferEditingOutputDTO createdOffer = offerEditingService.createOffer(offerEditingInputDTO);
-        return ResponseEntity.status(200).body(createdOffer);
-    }
-
-    @GetMapping
+    @GetMapping("/get-all")
     public ResponseEntity getAllOffers() {
         List<OfferEditingOutputDTO> offers = offerEditingService.getAllOffers();
         return ResponseEntity.status(200).body(offers);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-by-id/{id}")
     public ResponseEntity getOfferById(@PathVariable Integer id) {
         OfferEditingOutputDTO offer = offerEditingService.getOfferById(id);
         return ResponseEntity.status(200).body(offer);
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/create")
+    public ResponseEntity createOffer(@RequestBody @Valid OfferEditingInputDTO offerEditingInputDTO) {
+        OfferEditingOutputDTO createdOffer = offerEditingService.createOffer(offerEditingInputDTO);
+        return ResponseEntity.status(200).body(createdOffer);
+    }
+
+    @PutMapping("/update/{id}")
     public ResponseEntity updateOffer(@PathVariable Integer id, @RequestBody @Valid OfferEditingInputDTO offerEditingInputDTO) {
         OfferEditingOutputDTO updatedOffer = offerEditingService.updateOffer(id, offerEditingInputDTO);
         return ResponseEntity.status(200).body(updatedOffer);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity deleteOffer(@PathVariable Integer id) {
         offerEditingService.deleteOffer(id);
-        return ResponseEntity.status(200).body("Offer deleted successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("Offer deleted successfully"));
     }
 }
