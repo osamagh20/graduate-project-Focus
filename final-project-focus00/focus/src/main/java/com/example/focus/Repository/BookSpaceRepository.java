@@ -9,7 +9,7 @@ public interface BookSpaceRepository extends JpaRepository<BookSpace, Integer> {
 
     List<BookSpace> findByPhotographerId(Integer photographerId);
 
-    List<BookSpace> findBookByShiftId(Integer shiftId);
+    BookSpace findBookByShiftId(Integer shiftId);
 
     List<BookSpace> findByStatus(String status);
 }

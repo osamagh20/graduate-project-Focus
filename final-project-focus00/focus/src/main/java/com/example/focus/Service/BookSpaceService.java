@@ -54,11 +54,13 @@ public class BookSpaceService {
 
         Shift fullDayShift = shiftRepository.findShiftBySpaceIdAndDateAndName(
                 bookingDTOIn.getSpaceId(), bookingDTOIn.getDate().atStartOfDay(), "Full Day");
+
         Shift shift =shiftRepository.findShiftBySpaceIdAndDateAndName(bookingDTOIn.getSpaceId(),
                 bookingDTOIn.getDate().atStartOfDay(),bookingDTOIn.getShiftName());
+        BookSpace oldBook =bookSpaceRepository.findBookByShiftId(shift.getId());
 
-        if (bookSpaceRepository.findBookByShiftId(fullDayShift.getId())!=null) {
-            throw new ApiException("this shift is not available");
+        if (oldBook!=null) {
+            throw new ApiException("this shift is already booked");
         }
         if (shift.getStatus().equals("Unavailable")) {
             throw new ApiException("this shift is not available");
