@@ -94,6 +94,7 @@ public class OfferEditingService {
         dto.setOfferDate(offer.getOfferDate());
         dto.setOfferedPrice(offer.getOfferedPrice());
         dto.setEstimatedCompletionTime(offer.getEstimatedCompletionTime());
+        dto.setEditorId(offer.getEditor().getId());
         dto.setStatus(offer.getStatus());
         return dto;
     }

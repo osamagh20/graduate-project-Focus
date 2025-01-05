@@ -110,6 +110,8 @@ public class RequestEditingService {
         dto.setKitLens(request.getKitLens());
         dto.setViewFinder(request.getViewFinder());
         dto.setNativeISO(request.getNativeISO());
+        dto.setEditorName(request.getEditor().getName());
+        dto.setPhotographeName(request.getPhotographer().getName());
         dto.setStatus(request.getStatus());
         return dto;
     }
