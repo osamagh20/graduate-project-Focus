@@ -3,6 +3,7 @@ package com.example.focus.Controller;
 import com.example.focus.ApiResponse.ApiResponse;
 import com.example.focus.DTO.OfferEditingInputDTO;
 import com.example.focus.DTO.OfferEditingOutputDTO;
+import com.example.focus.Model.MyUser;
 import com.example.focus.Service.OfferEditingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,14 +55,14 @@ public class OfferEditingController {
     }
 
     @PostMapping("/accept/{offerId}")
-    public ResponseEntity acceptOffer(@PathVariable Integer offerId) {
-        OfferEditingOutputDTO acceptedOffer = offerEditingService.acceptOffer(offerId);
+    public ResponseEntity acceptOffer(@PathVariable Integer offerId, MyUser auth) {
+        OfferEditingOutputDTO acceptedOffer = offerEditingService.acceptOffer(offerId,auth.getId());
         return ResponseEntity.status(200).body(acceptedOffer);
     }
 
     @PostMapping("/reject/{offerId}")
-    public ResponseEntity rejectOffer(@PathVariable Integer offerId) {
-        OfferEditingOutputDTO rejectedOffer = offerEditingService.rejectOffer(offerId);
+    public ResponseEntity rejectOffer(@PathVariable Integer offerId, MyUser auth) {
+        OfferEditingOutputDTO rejectedOffer = offerEditingService.rejectOffer(offerId,auth.getId());
         return ResponseEntity.status(200).body(rejectedOffer);
     }
 }
