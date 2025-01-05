@@ -29,6 +29,7 @@ public class RequestEditingService {
         }
         return requestDTOs;
     }
+
     public List<RequestEditingOutputDTO> getEditorRequests(Integer id) {
         List<RequestEditing> requests = requestEditingRepository.findRequestEditingsByEditor_Id(id);
         List<RequestEditingOutputDTO> requestDTOs = new ArrayList<>();
@@ -37,8 +38,18 @@ public class RequestEditingService {
         }
         return requestDTOs;
     }
+
     public List<RequestEditingOutputDTO> getPhotographerRequests(Integer id) {
         List<RequestEditing> requests = requestEditingRepository.findRequestEditingsByPhotographerId(id);
+        List<RequestEditingOutputDTO> requestDTOs = new ArrayList<>();
+        for (RequestEditing request : requests) {
+            requestDTOs.add(convertToDTO(request));
+        }
+        return requestDTOs;
+    }
+
+    public List<RequestEditingOutputDTO> getAwaitingOfferRequestsForEditor(Integer id) {
+        List<RequestEditing> requests = requestEditingRepository.findRequestEditingsByEditor_IdAndStatus(id,"AwaitingOffer");
         List<RequestEditingOutputDTO> requestDTOs = new ArrayList<>();
         for (RequestEditing request : requests) {
             requestDTOs.add(convertToDTO(request));

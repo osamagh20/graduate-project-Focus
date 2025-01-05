@@ -33,6 +33,10 @@ public class RequestEditingController {
     public ResponseEntity getRequestForEditor(@PathVariable Integer id) {
         return ResponseEntity.status(200).body(requestEditingService.getEditorRequests(id));
     }
+    @GetMapping("/get-AwaitingOffer-editor-request/{id}")
+    public ResponseEntity getAwaitingOfferEditorRequest(@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(requestEditingService.getAwaitingOfferRequestsForEditor(id));
+    }
     @GetMapping("/get-photographer-request/{id}")
     public ResponseEntity getRequestForPhotographer(@PathVariable Integer id) {
         return ResponseEntity.status(200).body(requestEditingService.getPhotographerRequests(id));

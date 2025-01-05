@@ -11,5 +11,7 @@ public interface RequestEditingRepository extends JpaRepository<RequestEditing, 
     RequestEditing findRequestEditingById(Integer id);
     List<RequestEditing> findRequestEditingsByEditor_Id(Integer id);
     List<RequestEditing> findRequestEditingsByPhotographerId(Integer id);
+    List<RequestEditing> findRequestEditingsByEditor_IdAndStatus(Integer id, String status);
+
 
 }
