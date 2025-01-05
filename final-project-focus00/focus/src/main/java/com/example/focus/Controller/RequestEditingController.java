@@ -30,15 +30,21 @@ public class RequestEditingController {
         return ResponseEntity.status(200).body(request);
     }
 
-    @PostMapping("/create/{editorId}/{photoId}")
-    public ResponseEntity createRequest(@RequestBody @Valid RequestEditingInputDTO requestEditingInputDTO,@PathVariable Integer editorId,@PathVariable Integer photoId) {
-        RequestEditingOutputDTO createdRequest = requestEditingService.createRequest(requestEditingInputDTO,editorId,photoId);
+    @GetMapping("/get-by-editor/{editorId}")
+    public ResponseEntity getRequestsByEditor(@PathVariable Integer editorId) {
+        List<RequestEditingOutputDTO> requests = requestEditingService.getRequestsByEditorId(editorId);
+        return ResponseEntity.status(200).body(requests);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity createRequest(@RequestBody @Valid RequestEditingInputDTO requestInput) {
+        RequestEditingOutputDTO createdRequest = requestEditingService.createRequest(requestInput);
         return ResponseEntity.status(200).body(createdRequest);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateRequest(@PathVariable Integer id, @RequestBody @Valid RequestEditingInputDTO requestEditingInputDTO) {
-        RequestEditingOutputDTO updatedRequest = requestEditingService.updateRequest(id, requestEditingInputDTO);
+    public ResponseEntity updateRequest(@PathVariable Integer id, @RequestBody @Valid RequestEditingInputDTO requestInput) {
+        RequestEditingOutputDTO updatedRequest = requestEditingService.updateRequest(id, requestInput);
         return ResponseEntity.status(200).body(updatedRequest);
     }
 

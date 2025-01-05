@@ -30,15 +30,21 @@ public class OfferEditingController {
         return ResponseEntity.status(200).body(offer);
     }
 
+    @GetMapping("/get-by-editor/{editorId}")
+    public ResponseEntity getOffersByEditor(@PathVariable Integer editorId) {
+        List<OfferEditingOutputDTO> offers = offerEditingService.getOffersByEditorId(editorId);
+        return ResponseEntity.status(200).body(offers);
+    }
+
     @PostMapping("/create")
-    public ResponseEntity createOffer(@RequestBody @Valid OfferEditingInputDTO offerEditingInputDTO) {
-        OfferEditingOutputDTO createdOffer = offerEditingService.createOffer(offerEditingInputDTO);
+    public ResponseEntity createOffer(@RequestBody @Valid OfferEditingInputDTO offerInput) {
+        OfferEditingOutputDTO createdOffer = offerEditingService.createOffer(offerInput);
         return ResponseEntity.status(200).body(createdOffer);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateOffer(@PathVariable Integer id, @RequestBody @Valid OfferEditingInputDTO offerEditingInputDTO) {
-        OfferEditingOutputDTO updatedOffer = offerEditingService.updateOffer(id, offerEditingInputDTO);
+    public ResponseEntity updateOffer(@PathVariable Integer id, @RequestBody @Valid OfferEditingInputDTO offerInput) {
+        OfferEditingOutputDTO updatedOffer = offerEditingService.updateOffer(id, offerInput);
         return ResponseEntity.status(200).body(updatedOffer);
     }
 
