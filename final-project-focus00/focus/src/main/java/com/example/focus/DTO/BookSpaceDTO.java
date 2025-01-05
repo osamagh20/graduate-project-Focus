@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookSpaceDTO {
 
+    private Integer id; // Booking ID
     private Integer shiftId; // Shift ID associated with the booking
     private String shiftName; // Name of the shift (e.g., "Day Shift", "Night Shift", "Full Day")
     private String shiftDate; // Date of the shift

@@ -2,7 +2,6 @@ package com.example.focus.Controller;
 
 import com.example.focus.ApiResponse.ApiResponse;
 import com.example.focus.DTO.PhotographerDTOin;
-import com.example.focus.DTO.StudioDTO;
 import com.example.focus.DTO.ToolDTO;
 import com.example.focus.Service.PhotographerService;
 import jakarta.validation.Valid;
@@ -54,18 +53,6 @@ public class PhotographerController {
         return ResponseEntity.status(200).body(rentTools);
     }
 
-
-    @GetMapping("/get-studio-by-city/{photographer_id}/{city}")
-    public ResponseEntity getStudioByCity(@PathVariable Integer photographer_id,@PathVariable String city){
-        List<StudioDTO> studioDTOS = photographerService.getStudiosByCity(photographer_id,city);
-        return ResponseEntity.status(200).body(studioDTOS);
-    }
-
-    @GetMapping("/get-specific-studio")
-    public ResponseEntity getSpecificStudio(@PathVariable Integer photographer_id,@PathVariable Integer studio_id){
-        StudioDTO studioDTO = photographerService.getSpecificStudio(photographer_id,studio_id);
-        return ResponseEntity.status(200).body(studioDTO);
-    }
 
 
 }

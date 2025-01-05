@@ -6,14 +6,17 @@ import com.example.focus.DTO.*;
 import com.example.focus.Model.*;
 //import com.example.focus.Repository.BookSpaceRepository;
 //import com.example.focus.Repository.SpaceRepository;
-import com.example.focus.Repository.MyUserRepository;
-import com.example.focus.Repository.ProfileStudioRepository;
-import com.example.focus.Repository.SpaceRepository;
-import com.example.focus.Repository.StudioRepository;
+import com.example.focus.Repository.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +25,7 @@ import java.util.List;
 public class StudioService {
     private final MyUserRepository myUserRepository;
     private final StudioRepository studioRepository;
+    private final PhotographerRepository photographerRepository;
     private final SpaceRepository spaceRepository;
     private final ProfileStudioRepository profileStudioRepository;
     //  private final BookSpaceRepository bookSpaceRepository;
@@ -50,7 +54,6 @@ public class StudioService {
             throw new ApiException("email already exists");
         }
 
-
         MyUser user = new MyUser();
         user.setUsername(studioDTOIn.getUsername());
         user.setEmail(studioDTOIn.getEmail());
@@ -65,7 +68,7 @@ public class StudioService {
         studio.setCity(studioDTOIn.getCity());
         studio.setPhoneNumber(studioDTOIn.getPhoneNumber());
         studio.setAddress(studioDTOIn.getAddress());
-        studio.setStatus("active");
+        studio.setStatus("Inactive");
         studioRepository.save(studio);
 
 
@@ -73,7 +76,7 @@ public class StudioService {
 
     }
 
-    public void activateStudio(Integer admin_id,Integer studio_id,String status){
+    public void activateStudio(Integer admin_id,Integer studio_id){
         MyUser user = myUserRepository.findMyUserById(admin_id);
         if(user == null){
             throw new ApiException("admin not found");
@@ -82,7 +85,21 @@ public class StudioService {
         if(studio == null){
             throw new ApiException("studio not found");
         }
-        studio.setStatus(status);
+        studio.setStatus("active");
+        studioRepository.save(studio);
+    }
+
+    public void rejectStudio(Integer admin_id,Integer studio_id){
+        MyUser user = myUserRepository.findMyUserById(admin_id);
+        if(user == null){
+            throw new ApiException("admin not found");
+        }
+        Studio studio = studioRepository.findStudioById(studio_id);
+        if(studio == null){
+            throw new ApiException("studio not found");
+        }
+        studio.setStatus("rejected");
+        studioRepository.save(studio);
     }
 
 
@@ -182,6 +199,89 @@ public class StudioService {
 //        sr.setStatus(response);
 //
 //    }
+
+
+
+    private  final String UPLOAD_PROFILE_DIR = "C:/Users/doly/Desktop/Upload/Profile/";
+    public void UploadImage(Integer id, MultipartFile file) throws IOException {
+        MyUser user=myUserRepository.findMyUserById(id);
+        if (user != null) {
+
+            if (!isValidImageFile(file)) {
+                throw new ApiException("Invalid image file. Only JPG, PNG, and JPEG files are allowed");
+            }
+            Path filePath = Paths.get(UPLOAD_PROFILE_DIR.concat(saveImageFile(file)));
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            String filePathString = filePath.toString();
+            user.getStudio().setImageURL(filePathString);
+        } else {
+            throw new ApiException("Profile Not Found");
+        }
+        myUserRepository.save(user);
+    }
+
+
+    // التحقق من نوع الملف
+    private boolean isValidImageFile(MultipartFile file) {
+        String fileName = file.getOriginalFilename().toLowerCase();
+        return fileName.endsWith(".jpg") || fileName.endsWith(".png") || fileName.endsWith(".jpeg");
+    }
+
+    // حفظ الصورة في المسار المحدد
+    private String saveImageFile(MultipartFile file) throws IOException {
+        String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+        Path path = Paths.get(UPLOAD_PROFILE_DIR + fileName);
+        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        return fileName;
+    }
+
+
+    public List<StudioDTOPhotographer> getStudiosByCity(Integer photographer_id, String city) {
+        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
+        if(photographer==null) {
+            throw new ApiException("photographer not found");
+        }
+
+        List<Studio> studios = studioRepository.findStudioByCity(city);
+        if(studios.isEmpty()) {
+            throw new ApiException("Not have any studio");
+        }
+
+        List<StudioDTOPhotographer> studioDTOS = new ArrayList<>();
+        for (Studio studio1 : studios) {
+            StudioDTOPhotographer studioDTO1 = new StudioDTOPhotographer();
+            studioDTO1.setName(studio1.getName());
+            studioDTO1.setUsername(studio1.getMyUser().getUsername());
+            studioDTO1.setPhoneNumber(studio1.getPhoneNumber());
+            studioDTO1.setEmail(studio1.getMyUser().getEmail());
+            studioDTO1.setAddress(studio1.getAddress());
+            studioDTO1.setCommercialRecord(studio1.getCommercialRecord());
+            studioDTO1.setCity(studio1.getCity());
+            studioDTOS.add(studioDTO1);
+        }
+        return studioDTOS;
+
+    }
+
+    public StudioDTOPhotographer getSpecificStudio(Integer photographer_id,Integer studio_id) {
+        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
+        if(photographer==null) {
+            throw new ApiException("photographer not found");
+        }
+        Studio studio = studioRepository.findStudioById(studio_id);
+        if(studio==null) {
+            throw new ApiException("studio not found");
+        }
+        StudioDTOPhotographer studioDTO = new StudioDTOPhotographer();
+        studioDTO.setName(studio.getName());
+        studioDTO.setUsername(studio.getMyUser().getUsername());
+        studioDTO.setPhoneNumber(studio.getPhoneNumber());
+        studioDTO.setEmail(studio.getMyUser().getEmail());
+        studioDTO.setAddress(studio.getAddress());
+        studioDTO.setCommercialRecord(studio.getCommercialRecord());
+        studioDTO.setCity(studio.getCity());
+        return studioDTO;
+    }
 
 
 }

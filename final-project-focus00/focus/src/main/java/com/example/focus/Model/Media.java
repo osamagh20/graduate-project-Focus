@@ -39,13 +39,18 @@ public class Media {
     @Column(columnDefinition = "varchar(255) not null")
     private String mediaURL;
 
-    // إزالة العلاقة مع Photographer
-    // @ManyToOne
-    // @JoinColumn(name = "photographer_id")  // لا حاجة لهذه العلاقة بعد الآن
 
-    // إضافة علاقة مع ProfilePhotographer فقط
     @ManyToOne
-    @JoinColumn(name = "profile_id", referencedColumnName = "id")
+    @JoinColumn(name = "profile_photographer_id", referencedColumnName = "id")
     @JsonIgnore
-    private ProfilePhotographer profile;
+    private ProfilePhotographer ProfilePhotographer;
+
+    @ManyToOne
+    @JoinColumn(name = "requestEditing_id")
+    private RequestEditing requestEditing;
+
+    @ManyToOne
+    @JoinColumn(name = "profile_Editor_id", referencedColumnName = "id")
+    @JsonIgnore
+    private ProfileEditor ProfileEditor;
 }

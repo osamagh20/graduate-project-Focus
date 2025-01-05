@@ -14,9 +14,18 @@ public class SpaceDTOIn {
     private String name;
     @NotEmpty(message = "Please enter space type")
     private String type;
-    @NotNull(message = "Please enter space area")
-    @Positive
-    private Double area;
+//    @NotNull(message = "Please enter space area")
+//    @Positive
+//    private Double area;
+
+    @Column(columnDefinition = "double not null")
+    @Min(value = 1,message = "width should be 1 at least")
+    private Integer width;
+
+    @Min(value = 1,message = "width should be 1 at least")
+    @Column(columnDefinition = "double not null")
+    private Integer Length;
+
     private String description;
     @NotNull(message = "Please enter space price")
     @PositiveOrZero(message = "price can be zero or more")
@@ -28,9 +37,9 @@ public class SpaceDTOIn {
     @PositiveOrZero(message = "price can be zero or more")
     private Double fullDayPrice;
 
-    @NotNull(message = "Please provide a valid image URL")
-    @Pattern(regexp = "^(https?|ftp)://[^\s/$.?#].[^\s]*$", message = "Image URL must be a valid URL")
-    private String image;
+//    @Column(columnDefinition = "varchar(255) not null")
+//    @NotEmpty(message = "Image file cannot be empty")
+//    private MultipartFile image;
 
   //  private Integer studioID;
 }

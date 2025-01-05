@@ -1,5 +1,7 @@
 package com.example.focus.Model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,10 +20,12 @@ public class RentTools {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @FutureOrPresent
     @NotNull(message = "Please enter start date")
     @Column(columnDefinition = "DATETIME not null")
     private LocalDate startDate;
 
+    @Future
     @NotNull(message = "Please enter end date")
     @Column(columnDefinition = "DATETIME not null")
     private LocalDate endDate;

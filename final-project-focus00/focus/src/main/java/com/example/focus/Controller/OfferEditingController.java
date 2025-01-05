@@ -54,13 +54,13 @@ public class OfferEditingController {
         return ResponseEntity.status(200).body(new ApiResponse("Offer deleted successfully"));
     }
 
-    @PostMapping("/accept/{offerId}")
+    @PutMapping("/accept/{offerId}")
     public ResponseEntity acceptOffer(@PathVariable Integer offerId, MyUser auth) {
         OfferEditingOutputDTO acceptedOffer = offerEditingService.acceptOffer(offerId,auth.getId());
         return ResponseEntity.status(200).body(acceptedOffer);
     }
 
-    @PostMapping("/reject/{offerId}")
+    @PutMapping("/reject/{offerId}")
     public ResponseEntity rejectOffer(@PathVariable Integer offerId, MyUser auth) {
         OfferEditingOutputDTO rejectedOffer = offerEditingService.rejectOffer(offerId,auth.getId());
         return ResponseEntity.status(200).body(rejectedOffer);

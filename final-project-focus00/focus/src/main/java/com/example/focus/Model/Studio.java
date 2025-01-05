@@ -35,9 +35,10 @@ public class Studio {
 
     @NotEmpty(message = "commercialRecord")
     @Pattern(regexp = "^7\\d{9}$", message = "commercialRecord must start with 7 and be followed by 9 digits")
+    @Column(columnDefinition = "varchar(9) not null unique")
     private String commercialRecord;
 
-    @Pattern(regexp = "active|not active|rejected")
+    @Pattern(regexp = "active|Inactive|rejected")
     private String status;
 
     @OneToOne
@@ -46,8 +47,8 @@ public class Studio {
     @JsonIgnore
     private MyUser myUser;
 
-    @OneToOne(mappedBy = "studio", cascade = CascadeType.ALL)
-    private ProfileStudio profile;
+    @Column(columnDefinition = "varchar(255)")
+    private String imageURL;
 
 //    @OneToOne(mappedBy = "studio", cascade = CascadeType.ALL)
 //    private ProfileStudio profile;
