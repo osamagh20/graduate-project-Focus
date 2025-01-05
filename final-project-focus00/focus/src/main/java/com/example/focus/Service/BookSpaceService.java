@@ -153,7 +153,6 @@ public class BookSpaceService {
 
     private BookSpaceDTO convertToDTO(BookSpace booking) {
         BookSpaceDTO dto = new BookSpaceDTO();
-        dto.setId(booking.getId());
         dto.setShiftId(booking.getShift().getId());
         dto.setPhotographerId(booking.getPhotographerId());
         dto.setBookingPrice(booking.getBookingPrice());

@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RequestEditingOutputDTO {
 
-    private Integer id;
     private LocalDateTime estimatedCompletionDate;
     private String description;
     private String fullCameraName;
@@ -19,7 +18,7 @@ public class RequestEditingOutputDTO {
     private String kitLens;
     private String viewFinder;
     private String nativeISO;
-    private Integer editorId;
-    private Integer photographerId;
+    private String editorName;
+    private String photographeName;
     private String status; // Pending, Active, Closed, AwaitingOffer
 }

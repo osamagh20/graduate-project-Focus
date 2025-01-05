@@ -35,13 +35,13 @@ public class RequestEditingInputDTO {
     @NotBlank(message = "Native ISO cannot be blank")
     private String nativeISO;
 
-    @NotNull(message = "Editor ID cannot be null")
-    private Integer editorId;
+//    @NotNull(message = "Editor ID cannot be null")
+//    private Integer editorId;
 
-    @NotBlank(message = "Status cannot be blank")
-    @Pattern(
-            regexp = "Pending|Active|Closed|AwaitingOffer",
-            message = "Status must be one of the following: Pending, Active, Closed, AwaitingOffer"
-    )
-    private String status; // Pending, Active, Closed, AwaitingOffer
+//    @NotBlank(message = "Status cannot be blank")
+//    @Pattern(
+//            regexp = "Pending|Active|Closed|AwaitingOffer",
+//            message = "Status must be one of the following: Pending, Active, Closed, AwaitingOffer"
+//    )
+//    private String status; // Pending, Active, Closed, AwaitingOffer
 }

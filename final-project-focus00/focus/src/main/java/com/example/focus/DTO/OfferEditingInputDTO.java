@@ -31,11 +31,11 @@ public class OfferEditingInputDTO {
 
     @NotNull(message = "Estimated completion time cannot be null")
     private LocalDateTime estimatedCompletionTime;
-
-    @NotBlank(message = "Status cannot be blank")
-    @Pattern(
-            regexp = "Applied|Accepted|Rejected",
-            message = "Status must be one of the following: Applied, Accepted, Rejected"
-    )
-    private String status; // Applied, Accepted, Rejected
+//
+//    @NotBlank(message = "Status cannot be blank")
+//    @Pattern(
+//            regexp = "Applied|Accepted|Rejected",
+//            message = "Status must be one of the following: Applied, Accepted, Rejected"
+//    )
+//    private String status; // Applied, Accepted, Rejected
 }

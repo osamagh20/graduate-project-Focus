@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class OfferEditingOutputDTO {
 
-    private Integer id;
     private Integer requestId;
     private Integer editorId;
     private LocalDateTime offerDate;

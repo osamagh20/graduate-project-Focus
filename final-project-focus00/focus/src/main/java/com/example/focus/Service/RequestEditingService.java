@@ -4,9 +4,9 @@ import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.RequestEditingInputDTO;
 import com.example.focus.DTO.RequestEditingOutputDTO;
 import com.example.focus.Model.RequestEditing;
-import com.example.focus.Model.Editor;
-import com.example.focus.Repository.RequestEditingRepository;
 import com.example.focus.Repository.EditorRepository;
+import com.example.focus.Repository.PhotographerRepository;
+import com.example.focus.Repository.RequestEditingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,7 @@ public class RequestEditingService {
 
     private final RequestEditingRepository requestEditingRepository;
     private final EditorRepository editorRepository;
+    private final PhotographerRepository photographerRepository;
 
     public List<RequestEditingOutputDTO> getAllRequests() {
         List<RequestEditing> requests = requestEditingRepository.findAll();
@@ -30,18 +31,20 @@ public class RequestEditingService {
     }
 
     public RequestEditingOutputDTO getRequestById(Integer id) {
-        RequestEditing request = requestEditingRepository.findById(id).orElse(null);
-        if (request == null) {
-            throw new ApiException("Request not found");
-        }
+        RequestEditing request = requestEditingRepository.findById(id).orElseThrow(() -> new ApiException("Request not found"));
         return convertToDTO(request);
     }
 
-    public RequestEditingOutputDTO createRequest(RequestEditingInputDTO requestInput) {
-        Editor editor = editorRepository.findById(requestInput.getEditorId())
-                .orElseThrow(() -> new ApiException("Editor not found"));
-
+    public RequestEditingOutputDTO createRequest(RequestEditingInputDTO requestInput,Integer editorId,Integer photographerId) {
+        if (editorRepository.findEditorById(editorId) == null) {
+            throw new ApiException("Editor not found");
+        }
+        if (photographerRepository.findPhotographersById(photographerId) == null) {
+            throw new ApiException("Photographer not found");
+        }
         RequestEditing request = new RequestEditing();
+        request.setEditor(editorRepository.findEditorById(editorId));
+        request.setPhotographer(photographerRepository.findPhotographersById(photographerId));
         request.setEstimatedCompletionDate(requestInput.getEstimatedCompletionDate());
         request.setDescription(requestInput.getDescription());
         request.setFullCameraName(requestInput.getFullCameraName());
@@ -49,18 +52,12 @@ public class RequestEditingService {
         request.setKitLens(requestInput.getKitLens());
         request.setViewFinder(requestInput.getViewFinder());
         request.setNativeISO(requestInput.getNativeISO());
-        request.setStatus("Pending");
-        request.setEditor(editor);
-
+        request.setStatus("AwaitingOffer");
         return convertToDTO(requestEditingRepository.save(request));
     }
 
     public RequestEditingOutputDTO updateRequest(Integer id, RequestEditingInputDTO requestInput) {
-        RequestEditing request = requestEditingRepository.findById(id).orElse(null);
-        if (request == null) {
-            throw new ApiException("Request not found");
-        }
-
+        RequestEditing request = requestEditingRepository.findById(id).orElseThrow(() -> new ApiException("Request not found"));
         request.setEstimatedCompletionDate(requestInput.getEstimatedCompletionDate());
         request.setDescription(requestInput.getDescription());
         request.setFullCameraName(requestInput.getFullCameraName());
@@ -68,36 +65,44 @@ public class RequestEditingService {
         request.setKitLens(requestInput.getKitLens());
         request.setViewFinder(requestInput.getViewFinder());
         request.setNativeISO(requestInput.getNativeISO());
-        request.setStatus(requestInput.getStatus());
-
         return convertToDTO(requestEditingRepository.save(request));
     }
 
     public void deleteRequest(Integer id) {
-        RequestEditing request = requestEditingRepository.findById(id).orElse(null);
-        if (request == null) {
-            throw new ApiException("Request not found");
-        }
+        RequestEditing request = requestEditingRepository.findById(id).orElseThrow(() -> new ApiException("Request not found"));
         requestEditingRepository.delete(request);
     }
 
-    public List<RequestEditingOutputDTO> getRequestsByEditorId(Integer editorId) {
-        Editor editor = editorRepository.findById(editorId).orElse(null);
-        if (editor == null) {
-            throw new ApiException("Editor not found");
+    public RequestEditingOutputDTO acceptRequest(Integer requestId) {
+        RequestEditing request = requestEditingRepository.findById(requestId)
+                .orElseThrow(() -> new ApiException("Request not found"));
+
+        if (!"Pending".equals(request.getStatus())) {
+            throw new ApiException("Only requests with 'Pending' status can be accepted.");
         }
 
-        List<RequestEditing> requests = requestEditingRepository.findRequestEditingsByEditor_Id(editorId);
-        List<RequestEditingOutputDTO> requestDTOs = new ArrayList<>();
-        for (RequestEditing request : requests) {
-            requestDTOs.add(convertToDTO(request));
+        request.setStatus("AwaitingOffer");
+        requestEditingRepository.save(request);
+
+        return convertToDTO(request);
+    }
+
+    public RequestEditingOutputDTO rejectRequest(Integer requestId) {
+        RequestEditing request = requestEditingRepository.findById(requestId)
+                .orElseThrow(() -> new ApiException("Request not found"));
+
+        if (!"Pending".equals(request.getStatus())) {
+            throw new ApiException("Only requests with 'Pending' status can be rejected.");
         }
-        return requestDTOs;
+
+        request.setStatus("Closed");
+        requestEditingRepository.save(request);
+
+        return convertToDTO(request);
     }
 
     private RequestEditingOutputDTO convertToDTO(RequestEditing request) {
         RequestEditingOutputDTO dto = new RequestEditingOutputDTO();
-        dto.setId(request.getId());
         dto.setEstimatedCompletionDate(request.getEstimatedCompletionDate());
         dto.setDescription(request.getDescription());
         dto.setFullCameraName(request.getFullCameraName());
@@ -105,7 +110,6 @@ public class RequestEditingService {
         dto.setKitLens(request.getKitLens());
         dto.setViewFinder(request.getViewFinder());
         dto.setNativeISO(request.getNativeISO());
-        dto.setEditorId(request.getEditor().getId());
         dto.setStatus(request.getStatus());
         return dto;
     }

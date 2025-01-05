@@ -30,15 +30,9 @@ public class RequestEditingController {
         return ResponseEntity.status(200).body(request);
     }
 
-    @GetMapping("/get-by-editor/{editorId}")
-    public ResponseEntity getRequestsByEditor(@PathVariable Integer editorId) {
-        List<RequestEditingOutputDTO> requests = requestEditingService.getRequestsByEditorId(editorId);
-        return ResponseEntity.status(200).body(requests);
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity createRequest(@RequestBody @Valid RequestEditingInputDTO requestInput) {
-        RequestEditingOutputDTO createdRequest = requestEditingService.createRequest(requestInput);
+    @PostMapping("/create/{editorId}/{photographerId}")
+    public ResponseEntity createRequest(@RequestBody @Valid RequestEditingInputDTO requestInput, @PathVariable Integer editorId, @PathVariable Integer photographerId) {
+        RequestEditingOutputDTO createdRequest = requestEditingService.createRequest(requestInput, editorId, photographerId);
         return ResponseEntity.status(200).body(createdRequest);
     }
 
@@ -52,5 +46,17 @@ public class RequestEditingController {
     public ResponseEntity deleteRequest(@PathVariable Integer id) {
         requestEditingService.deleteRequest(id);
         return ResponseEntity.status(200).body(new ApiResponse("Request deleted successfully"));
+    }
+
+    @PostMapping("/accept/{requestId}")
+    public ResponseEntity acceptRequest(@PathVariable Integer requestId) {
+        RequestEditingOutputDTO acceptedRequest = requestEditingService.acceptRequest(requestId);
+        return ResponseEntity.status(200).body(acceptedRequest);
+    }
+
+    @PostMapping("/reject/{requestId}")
+    public ResponseEntity rejectRequest(@PathVariable Integer requestId) {
+        RequestEditingOutputDTO rejectedRequest = requestEditingService.rejectRequest(requestId);
+        return ResponseEntity.status(200).body(rejectedRequest);
     }
 }

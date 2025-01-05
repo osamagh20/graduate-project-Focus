@@ -30,12 +30,6 @@ public class OfferEditingController {
         return ResponseEntity.status(200).body(offer);
     }
 
-    @GetMapping("/get-by-editor/{editorId}")
-    public ResponseEntity getOffersByEditor(@PathVariable Integer editorId) {
-        List<OfferEditingOutputDTO> offers = offerEditingService.getOffersByEditorId(editorId);
-        return ResponseEntity.status(200).body(offers);
-    }
-
     @PostMapping("/create")
     public ResponseEntity createOffer(@RequestBody @Valid OfferEditingInputDTO offerInput) {
         OfferEditingOutputDTO createdOffer = offerEditingService.createOffer(offerInput);
@@ -52,5 +46,17 @@ public class OfferEditingController {
     public ResponseEntity deleteOffer(@PathVariable Integer id) {
         offerEditingService.deleteOffer(id);
         return ResponseEntity.status(200).body(new ApiResponse("Offer deleted successfully"));
+    }
+
+    @PostMapping("/accept/{offerId}")
+    public ResponseEntity acceptOffer(@PathVariable Integer offerId) {
+        OfferEditingOutputDTO acceptedOffer = offerEditingService.acceptOffer(offerId);
+        return ResponseEntity.status(200).body(acceptedOffer);
+    }
+
+    @PostMapping("/reject/{offerId}")
+    public ResponseEntity rejectOffer(@PathVariable Integer offerId) {
+        OfferEditingOutputDTO rejectedOffer = offerEditingService.rejectOffer(offerId);
+        return ResponseEntity.status(200).body(rejectedOffer);
     }
 }
