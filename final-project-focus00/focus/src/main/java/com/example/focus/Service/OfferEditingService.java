@@ -4,6 +4,7 @@ import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.OfferEditingInputDTO;
 import com.example.focus.DTO.OfferEditingOutputDTO;
 import com.example.focus.Model.OfferEditing;
+import com.example.focus.Repository.EditorRepository;
 import com.example.focus.Repository.OfferEditingRepository;
 import com.example.focus.Repository.RequestEditingRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,18 @@ public class OfferEditingService {
 
     private final OfferEditingRepository offerEditingRepository;
     private final RequestEditingRepository requestEditingRepository;
+    private final EditorRepository editorRepository;
 
     public List<OfferEditingOutputDTO> getAllOffers() {
         List<OfferEditing> offers = offerEditingRepository.findAll();
+        List<OfferEditingOutputDTO> offerDTOs = new ArrayList<>();
+        for (OfferEditing offer : offers) {
+            offerDTOs.add(convertToDTO(offer));
+        }
+        return offerDTOs;
+    }
+    public List<OfferEditingOutputDTO> getEditorOffers(Integer editorId) {
+        List<OfferEditing> offers = offerEditingRepository.findOfferEditingByEditor_Id(editorId);
         List<OfferEditingOutputDTO> offerDTOs = new ArrayList<>();
         for (OfferEditing offer : offers) {
             offerDTOs.add(convertToDTO(offer));
@@ -33,13 +43,17 @@ public class OfferEditingService {
         return convertToDTO(offer);
     }
 
-    public OfferEditingOutputDTO createOffer(OfferEditingInputDTO offerInput) {
+    public OfferEditingOutputDTO createOffer(OfferEditingInputDTO offerInput,Integer editorId) {
+        if (editorRepository.findEditorById(editorId) == null) {
+            throw new ApiException("Editor not found");
+        }
         OfferEditing offer = new OfferEditing();
         offer.setRequestEditing(requestEditingRepository.findById(offerInput.getRequestId())
                 .orElseThrow(() -> new ApiException("Request not found")));
 
         offer.setOfferDate(offerInput.getOfferDate());
         offer.setOfferedPrice(offerInput.getOfferedPrice());
+        offer.setEditor(editorRepository.findEditorById(editorId));
         offer.setEstimatedCompletionTime(offerInput.getEstimatedCompletionTime());
         offer.setStatus("Applied");
 
@@ -94,7 +108,7 @@ public class OfferEditingService {
         dto.setOfferDate(offer.getOfferDate());
         dto.setOfferedPrice(offer.getOfferedPrice());
         dto.setEstimatedCompletionTime(offer.getEstimatedCompletionTime());
-        dto.setEditorId(offer.getEditor().getId());
+        dto.setEditorName(offer.getEditor().getName());
         dto.setStatus(offer.getStatus());
         return dto;
     }

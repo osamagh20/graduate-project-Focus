@@ -29,6 +29,14 @@ public class RequestEditingController {
         RequestEditingOutputDTO request = requestEditingService.getRequestById(id);
         return ResponseEntity.status(200).body(request);
     }
+    @GetMapping("/get-editor-request/{id}")
+    public ResponseEntity getRequestForEditor(@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(requestEditingService.getEditorRequests(id));
+    }
+    @GetMapping("/get-photographer-request/{id}")
+    public ResponseEntity getRequestForPhotographer(@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(requestEditingService.getPhotographerRequests(id));
+    }
 
     @PostMapping("/create/{editorId}/{photographerId}")
     public ResponseEntity createRequest(@RequestBody @Valid RequestEditingInputDTO requestInput, @PathVariable Integer editorId, @PathVariable Integer photographerId) {

@@ -30,9 +30,14 @@ public class OfferEditingController {
         return ResponseEntity.status(200).body(offer);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity createOffer(@RequestBody @Valid OfferEditingInputDTO offerInput) {
-        OfferEditingOutputDTO createdOffer = offerEditingService.createOffer(offerInput);
+    @GetMapping("/get-by-editor/{id}")
+    public ResponseEntity getEditorOffer(@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(offerEditingService.getEditorOffers(id));
+    }
+
+    @PostMapping("/create/{id}")
+    public ResponseEntity createOffer(@RequestBody @Valid OfferEditingInputDTO offerInput, @PathVariable Integer id) {
+        OfferEditingOutputDTO createdOffer = offerEditingService.createOffer(offerInput,id);
         return ResponseEntity.status(200).body(createdOffer);
     }
 

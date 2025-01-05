@@ -29,6 +29,22 @@ public class RequestEditingService {
         }
         return requestDTOs;
     }
+    public List<RequestEditingOutputDTO> getEditorRequests(Integer id) {
+        List<RequestEditing> requests = requestEditingRepository.findRequestEditingsByEditor_Id(id);
+        List<RequestEditingOutputDTO> requestDTOs = new ArrayList<>();
+        for (RequestEditing request : requests) {
+            requestDTOs.add(convertToDTO(request));
+        }
+        return requestDTOs;
+    }
+    public List<RequestEditingOutputDTO> getPhotographerRequests(Integer id) {
+        List<RequestEditing> requests = requestEditingRepository.findRequestEditingsByPhotographerId(id);
+        List<RequestEditingOutputDTO> requestDTOs = new ArrayList<>();
+        for (RequestEditing request : requests) {
+            requestDTOs.add(convertToDTO(request));
+        }
+        return requestDTOs;
+    }
 
     public RequestEditingOutputDTO getRequestById(Integer id) {
         RequestEditing request = requestEditingRepository.findById(id).orElseThrow(() -> new ApiException("Request not found"));

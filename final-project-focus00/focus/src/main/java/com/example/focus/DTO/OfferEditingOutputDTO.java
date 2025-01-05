@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class OfferEditingOutputDTO {
 
     private Integer requestId;
-    private Integer editorId;
+    private String editorName;
     private LocalDateTime offerDate;
     private BigDecimal offeredPrice;
     private LocalDateTime estimatedCompletionTime;
