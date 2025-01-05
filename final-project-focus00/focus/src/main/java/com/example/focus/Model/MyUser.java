@@ -16,38 +16,38 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 
-public class MyUser {
+public class MyUser /*implements UserDetails */{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-//    @NotEmpty(message = "Email cannot be empty")
+    //    @NotEmpty(message = "Email cannot be empty")
 //    @Email(message = "Email should be valid")
- @Column(columnDefinition = "varchar(40) not null unique")
+    @Column(columnDefinition = "varchar(40) not null unique")
     private String email;
 
-//    @NotEmpty(message = "Username cannot be empty")
+    //    @NotEmpty(message = "Username cannot be empty")
 //    @Size(min = 4, max = 50, message = "Username must be between 4 and 50 characters")
-   @Column(columnDefinition = "varchar(40) not null unique")
+    @Column(columnDefinition = "varchar(40) not null unique")
     private String username;
 
-//    @NotEmpty(message = "Please enter your password")
+    //    @NotEmpty(message = "Please enter your password")
 //    @Size(min = 6, message = "Password must be at least 6 characters")
 //    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{6,}$",
 //            message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")
-   @Column(columnDefinition = "varchar(40) not null")
+    @Column(columnDefinition = "varchar(40) not null")
     private String password;
 
-   @Pattern(regexp = "PHOTOGRAPHER|EDITOR|STUDIO|ADMIN",message = "role should be admin or user or employee")
-   @Column(columnDefinition = "varchar(14) ")
+    @Pattern(regexp = "PHOTOGRAPHER|EDITOR|STUDIO|ADMIN",message = "role should be admin or user or employee")
+    @Column(columnDefinition = "varchar(14) ")
     private String role;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @PrimaryKeyJoinColumn
     private Photographer photographer;
 
-@OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     @JsonIgnore
     private ProfilePhotographer profilePhotographer;
@@ -58,6 +58,7 @@ public class MyUser {
 
     @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
+    @JsonIgnore
     private ProfileEditor profileEditor;
 
 

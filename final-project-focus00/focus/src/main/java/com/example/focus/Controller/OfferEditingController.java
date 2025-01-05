@@ -3,6 +3,7 @@ package com.example.focus.Controller;
 import com.example.focus.ApiResponse.ApiResponse;
 import com.example.focus.DTO.OfferEditingInputDTO;
 import com.example.focus.DTO.OfferEditingOutputDTO;
+import com.example.focus.Model.MyUser;
 import com.example.focus.Service.OfferEditingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,14 @@ public class OfferEditingController {
         return ResponseEntity.status(200).body(offer);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity createOffer(@RequestBody @Valid OfferEditingInputDTO offerInput) {
-        OfferEditingOutputDTO createdOffer = offerEditingService.createOffer(offerInput);
+    @GetMapping("/get-by-editor/{id}")
+    public ResponseEntity getEditorOffer(@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(offerEditingService.getEditorOffers(id));
+    }
+
+    @PostMapping("/create/{id}")
+    public ResponseEntity createOffer(@RequestBody @Valid OfferEditingInputDTO offerInput, @PathVariable Integer id) {
+        OfferEditingOutputDTO createdOffer = offerEditingService.createOffer(offerInput,id);
         return ResponseEntity.status(200).body(createdOffer);
     }
 
@@ -48,15 +54,15 @@ public class OfferEditingController {
         return ResponseEntity.status(200).body(new ApiResponse("Offer deleted successfully"));
     }
 
-    @PostMapping("/accept/{offerId}")
-    public ResponseEntity acceptOffer(@PathVariable Integer offerId) {
-        OfferEditingOutputDTO acceptedOffer = offerEditingService.acceptOffer(offerId);
+    @PutMapping("/accept/{offerId}")
+    public ResponseEntity acceptOffer(@PathVariable Integer offerId, MyUser auth) {
+        OfferEditingOutputDTO acceptedOffer = offerEditingService.acceptOffer(offerId,auth.getId());
         return ResponseEntity.status(200).body(acceptedOffer);
     }
 
-    @PostMapping("/reject/{offerId}")
-    public ResponseEntity rejectOffer(@PathVariable Integer offerId) {
-        OfferEditingOutputDTO rejectedOffer = offerEditingService.rejectOffer(offerId);
+    @PutMapping("/reject/{offerId}")
+    public ResponseEntity rejectOffer(@PathVariable Integer offerId, MyUser auth) {
+        OfferEditingOutputDTO rejectedOffer = offerEditingService.rejectOffer(offerId,auth.getId());
         return ResponseEntity.status(200).body(rejectedOffer);
     }
 }

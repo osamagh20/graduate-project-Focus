@@ -1,5 +1,6 @@
 package com.example.focus.DTO;
 
+import com.example.focus.Model.Media;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -34,6 +36,10 @@ public class RequestEditingInputDTO {
 
     @NotBlank(message = "Native ISO cannot be blank")
     private String nativeISO;
+
+    private List<Media>mediaList;
+
+
 
 //    @NotNull(message = "Editor ID cannot be null")
 //    private Integer editorId;

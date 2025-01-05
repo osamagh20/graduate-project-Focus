@@ -36,7 +36,7 @@ public class BookSpaceService {
     public BookSpaceDTO getBookingById(Integer id) {
         BookSpace booking = bookSpaceRepository.findById(id).orElse(null);
         if (booking == null) {
-            throw new ApiException("Booking not found");
+            throw new IllegalArgumentException("Booking not found");
         }
         return convertToDTO(booking);
     }
@@ -115,7 +115,7 @@ public class BookSpaceService {
     public BookSpaceDTO updateBookingStatus(Integer id, String status) {
         BookSpace booking = bookSpaceRepository.findById(id).orElse(null);
         if (booking == null) {
-            throw new ApiException("Booking not found");
+            throw new IllegalArgumentException("Booking not found");
         }
         booking.setStatus(status);
 
@@ -130,7 +130,7 @@ public class BookSpaceService {
     public void deleteBooking(Integer id) {
         BookSpace booking = bookSpaceRepository.findById(id).orElse(null);
         if (booking == null) {
-            throw new ApiException("Booking not found");
+            throw new IllegalArgumentException("Booking not found");
         }
         Shift shift = booking.getShift();
         if (shift != null) {
@@ -153,6 +153,7 @@ public class BookSpaceService {
 
     private BookSpaceDTO convertToDTO(BookSpace booking) {
         BookSpaceDTO dto = new BookSpaceDTO();
+        dto.setId(booking.getId());
         dto.setShiftId(booking.getShift().getId());
         dto.setPhotographerId(booking.getPhotographerId());
         dto.setBookingPrice(booking.getBookingPrice());

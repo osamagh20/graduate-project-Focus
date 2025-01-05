@@ -2,13 +2,17 @@ package com.example.focus.Service;
 
 import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.ProfileDTO;
+import com.example.focus.DTO.ProfileDTOin;
 import com.example.focus.Model.Media;
 import com.example.focus.Model.MyUser;
+import com.example.focus.Model.ProfileEditor;
 import com.example.focus.Model.ProfilePhotographer;
 import com.example.focus.Repository.MediaRepository;
 import com.example.focus.Repository.MyUserRepository;
+import com.example.focus.Repository.ProfileEditorRepository;
 import com.example.focus.Repository.ProfilePhotographerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProfilePhotographerService {
     private final ProfilePhotographerRepository profilePhotographerRepository ;
+    private final ProfileEditorRepository profileEditorRepository ;
     private final MediaRepository mediaRepository;
     private final MyUserRepository myUserRepository;
 
@@ -49,10 +54,10 @@ public class ProfilePhotographerService {
 
 
     public ProfilePhotographer getMyProfile(Integer photographerid ) {
-       ProfilePhotographer profile = profilePhotographerRepository.findProfilePhotographerById(photographerid);
-if(profile == null) {
-    throw new ApiException("Photographer not found");
-}
+        ProfilePhotographer profile = profilePhotographerRepository.findProfilePhotographerById(photographerid);
+        if(profile == null) {
+            throw new ApiException("Photographer not found");
+        }
         //List<ProfileDTO> profileDTOs = new ArrayList<>();
 
 //        for (ProfilePhotographer profilePhotographer : profiles) {
@@ -69,20 +74,67 @@ if(profile == null) {
     }
 
 
+    public ProfilePhotographer getSpecificProfile(Integer userid1, Integer userid2 ) {
+        MyUser user1 = myUserRepository.findMyUserById(userid1);
+        if(user1 == null) {
+            throw new ApiException("User not not found");
+        }
+
+       MyUser user2= myUserRepository.findMyUserById(userid2);
+        if(user2 == null) {
+            throw new ApiException("User you search about not found");
+        }
+            ProfilePhotographer profilePhotographer = profilePhotographerRepository.findProfilePhotographerById(userid2);
+
+        return profilePhotographer;
+        //List<ProfileDTO> profileDTOs = new ArrayList<>();
+
+//        for (ProfilePhotographer profilePhotographer : profiles) {
+//            ProfileDTO profileDTO = new ProfileDTO(
+//                    profilePhotographer.getDescription(),
+//                    profilePhotographer.getNumberOfPosts(),
+//                    profilePhotographer.getImage()
+//            );
+//            profileDTOs.add(profileDTO);
+//        }
+//        return profileDTOs;
+    }
+
+
     public void addProfile(ProfilePhotographer profile) {
         profilePhotographerRepository.save(profile);
     }
 
-    public void updateProfile(Integer id, ProfilePhotographer profile) {
-        ProfilePhotographer existingProfile = profilePhotographerRepository.findProfilePhotographerById(id);
-        if (existingProfile != null) {
-            existingProfile.setDescription(profile.getDescription());
-            existingProfile.setImage(profile.getImage());
+
+    //update profile
+    private  final String UPLOAD_PROFILE_DIR = "C:/Users/doly/Desktop/Upload/Profile/";
+    public void updateProfile(Integer id, ProfileDTOin profileDTOin, MultipartFile file) throws IOException{
+        MyUser user=myUserRepository.findMyUserById(id);
+        if (user != null) {
+
+            if (!isValidImageFile(file)) {
+                throw new ApiException("Invalid image file. Only JPG, PNG, and JPEG files are allowed");
+            }
+
+            Path filePath = Paths.get(UPLOAD_PROFILE_DIR.concat(saveImageFile(file)));
+
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            String filePathString = filePath.toString();
+
+            user.getProfilePhotographer().setDescription(profileDTOin.getDescription());
+            user.getProfilePhotographer().setImage(filePathString);
         } else {
             throw new ApiException("Profile Not Found");
         }
-        profilePhotographerRepository.save(existingProfile);
-    }
+myUserRepository.save(user);
+}
+
+
+
+
+
+
 
     public void deleteProfile(Integer id) {
         ProfilePhotographer existingProfile = profilePhotographerRepository.findProfilePhotographerById(id);
@@ -96,45 +148,71 @@ if(profile == null) {
 
 
 
-    private  final String UPLOAD_DIR = "C:/Users/doly/Desktop/Media/Photographers/"; // المسار حيث سيتم حفظ الملفات
 
-    // الميثود التي ستتعامل مع رفع وحفظ الملف
-    public void saveMediaFile(Integer profileid, MultipartFile file) throws IOException {
+    private  final String UPLOAD_MEDIA_PROFILE_DIR = "C:/Users/doly/Desktop/Upload/Media/";
+
+    public void uploadMedia(Integer profileid, MultipartFile file) throws IOException {
         ProfilePhotographer profilePhotographer=profilePhotographerRepository.findProfilePhotographerById (profileid);
         if(profilePhotographer==null){
             throw new ApiException("ProfilePhotographer not found");
         }
-
         String fileName = file.getOriginalFilename();
-
         String fileType = getFileType(fileName);
 
         if ("unknown".equals(fileType)) {
             throw new ApiException("Unsupported file type. Only images and videos are allowed");
         }
 
-        // تحديد المسار الكامل للملف في الجهاز
-        Path filePath = Paths.get(UPLOAD_DIR.concat(fileName));
 
-        // حفظ الملف على الجهاز في المجلد المحدد
+        Path filePath = Paths.get(UPLOAD_MEDIA_PROFILE_DIR.concat(fileName));
+
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // تحديد مسار الملف الذي سيتم تخزينه في قاعدة البيانات
         String filePathString = filePath.toString();
 
-        // هنا نقوم بإنشاء كائن `Media` لتخزين تفاصيل الملف في قاعدة البيانات
+        profilePhotographer.setNumberOfPosts(profilePhotographer.getNumberOfPosts()+1);
         Media media = new Media();
-        media.setProfile(profilePhotographer);
-        media.setMediaType(fileType);  // تعيين نوع الملف (صورة أو فيديو)
+        media.setProfilePhotographer(profilePhotographer);
+        media.setMediaType(fileType);  //
         media.setUploadDate(LocalDateTime.now());
-        media.setMediaURL(filePathString);  // تعيين اسم الملف كـ URL
-        media.setVisibility(true);  // أو أي منطق آخر لتحديد الظهور
+        media.setMediaURL(filePathString);
+        media.setVisibility(true);
 
-
-        // حفظ الميديا في قاعدة البيانات
         mediaRepository.save(media);
 
+    }
 
+
+//get my photo
+
+//    public Media GetMyPhoto(Integer id){
+//        Media media = mediaRepository.findMediaById(id);
+//    }
+
+//get my video
+
+
+//get photo number
+
+
+ //get video number
+
+
+
+
+
+    // التحقق من نوع الملف
+    private boolean isValidImageFile(MultipartFile file) {
+        String fileName = file.getOriginalFilename().toLowerCase();
+        return fileName.endsWith(".jpg") || fileName.endsWith(".png") || fileName.endsWith(".jpeg");
+    }
+
+    // حفظ الصورة في المسار المحدد
+    private String saveImageFile(MultipartFile file) throws IOException {
+        String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
+        Path path = Paths.get(UPLOAD_PROFILE_DIR + fileName);
+        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        return fileName;
     }
 
 
@@ -159,15 +237,6 @@ if(profile == null) {
 
 
 
-
-
-
-
-
-
-
-
-    // ميثود لتحديد نوع الملف بناءً على امتداده
     private String getFileType(String fileName) {
         String fileType = "unknown";
         if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png")) {

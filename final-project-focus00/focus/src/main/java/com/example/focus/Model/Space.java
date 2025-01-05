@@ -23,8 +23,15 @@ public class Space {
     @Column(columnDefinition = "varchar(20) not null")
     private String type;
 
+//    @Column(columnDefinition = "double not null")
+//    private Double area;
+
+   @Column(columnDefinition = "double not null")
+    private Integer width;
+
     @Column(columnDefinition = "double not null")
-    private Double area;
+    private Integer Length;
+
 
     @Column(columnDefinition = "varchar(150) not null")
     private String description;

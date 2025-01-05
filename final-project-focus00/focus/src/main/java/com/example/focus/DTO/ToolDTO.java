@@ -13,13 +13,14 @@ public class ToolDTO {
 
     private String category;
 
-    private String brand;
+    private String modelNumber;
 
-    private String condition;
+    private Integer numberOfRentals;
+
+    private String brand;
 
     private Double rentalPrice;
 
     private String imageUrl;
 
-    private Integer photographer_id;
 }

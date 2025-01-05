@@ -3,6 +3,8 @@ package com.example.focus.Controller;
 import com.example.focus.ApiResponse.ApiResponse;
 import com.example.focus.DTO.RequestEditingInputDTO;
 import com.example.focus.DTO.RequestEditingOutputDTO;
+import com.example.focus.Model.MyUser;
+import com.example.focus.Repository.RequestEditingRepository;
 import com.example.focus.Service.RequestEditingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.List;
 public class RequestEditingController {
 
     private final RequestEditingService requestEditingService;
+    private final RequestEditingRepository requestEditingRepository;
 
     @GetMapping("/get-all")
     public ResponseEntity getAllRequests() {
@@ -25,9 +28,24 @@ public class RequestEditingController {
     }
 
     @GetMapping("/get-by-id/{id}")
-    public ResponseEntity getRequestById(@PathVariable Integer id) {
-        RequestEditingOutputDTO request = requestEditingService.getRequestById(id);
-        return ResponseEntity.status(200).body(request);
+    public ResponseEntity getRequestById(@PathVariable Integer id, MyUser auth) {
+        return ResponseEntity.status(200).body(requestEditingService.getRequestByIdGeneral(id,auth.getId()));}
+
+    @GetMapping("/get-by-id-Active/{id}")
+    public ResponseEntity getActiveRequestById(@PathVariable Integer id, MyUser auth) {
+        return ResponseEntity.status(200).body(requestEditingService.getRequestByIdActive(id,auth.getId()));}
+
+    @GetMapping("/get-editor-request/{id}")
+    public ResponseEntity getRequestForEditor(@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(requestEditingService.getEditorRequests(id));
+    }
+    @GetMapping("/get-AwaitingOffer-editor-request/{id}")
+    public ResponseEntity getAwaitingOfferEditorRequest(@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(requestEditingService.getAwaitingOfferRequestsForEditor(id));
+    }
+    @GetMapping("/get-photographer-request/{id}")
+    public ResponseEntity getRequestForPhotographer(@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(requestEditingService.getPhotographerRequests(id));
     }
 
     @PostMapping("/create/{editorId}/{photographerId}")
@@ -47,14 +65,14 @@ public class RequestEditingController {
         requestEditingService.deleteRequest(id);
         return ResponseEntity.status(200).body(new ApiResponse("Request deleted successfully"));
     }
+//
+//    @PutMapping("/accept/{requestId}")
+//    public ResponseEntity acceptRequest(@PathVariable Integer requestId) {
+//        RequestEditingOutputDTO acceptedRequest = requestEditingService.acceptRequest(requestId);
+//        return ResponseEntity.status(200).body(acceptedRequest);
+//    }
 
-    @PostMapping("/accept/{requestId}")
-    public ResponseEntity acceptRequest(@PathVariable Integer requestId) {
-        RequestEditingOutputDTO acceptedRequest = requestEditingService.acceptRequest(requestId);
-        return ResponseEntity.status(200).body(acceptedRequest);
-    }
-
-    @PostMapping("/reject/{requestId}")
+    @PutMapping("/reject/{requestId}")
     public ResponseEntity rejectRequest(@PathVariable Integer requestId) {
         RequestEditingOutputDTO rejectedRequest = requestEditingService.rejectRequest(requestId);
         return ResponseEntity.status(200).body(rejectedRequest);

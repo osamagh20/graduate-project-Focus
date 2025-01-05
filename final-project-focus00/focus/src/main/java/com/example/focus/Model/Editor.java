@@ -36,6 +36,7 @@ public class Editor {
     @JsonIgnore
     private MyUser myUser;
 
+
     @OneToMany(mappedBy = "editor")
     private Set<RequestEditing> requests;
 
@@ -45,5 +46,4 @@ public class Editor {
     @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private ProfileEditor profileEditor;
-
 }

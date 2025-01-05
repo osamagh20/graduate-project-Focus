@@ -1,5 +1,7 @@
 package com.example.focus.DTO;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class SpaceDTO {
     private String name;
     private String type;
-    private Double area;
+    private Integer width;
+    private Integer Length;
     private String description;
     private Double priceDay;
     private Double priceNight;

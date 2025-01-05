@@ -4,13 +4,8 @@ package com.example.focus.Service;
 import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.EditorDTO;
 import com.example.focus.DTO.EditorDTOin;
-import com.example.focus.DTO.PhotographerDTO;
-import com.example.focus.Model.Editor;
-import com.example.focus.Model.MyUser;
-import com.example.focus.Model.Photographer;
-import com.example.focus.Model.ProfileEditor;
-import com.example.focus.Repository.EditorRepository;
-import com.example.focus.Repository.MyUserRepository;
+import com.example.focus.Model.*;
+import com.example.focus.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +17,7 @@ import java.util.List;
 public class EditorService {
     private final MyUserRepository myUserRepository;
     private final EditorRepository editorRepository;
+    private final ProfileEditorRepository  profileEditorRepository;
 
     public List<EditorDTO> getAllEditors() {
         List<Editor> editors = editorRepository.findAll();
@@ -56,6 +52,11 @@ public class EditorService {
         editor.setPhoneNumber(editorDTOin.getPhoneNumber());
         editorRepository.save(editor);
 
+        ProfileEditor profileEditor = new ProfileEditor();
+        profileEditor.setMyUser(user);
+        profileEditor.setNumberOfPosts(0);
+        profileEditorRepository.save(profileEditor);
+
     }
 
     public void updateEditor(Integer id, EditorDTOin editorDTOin) {
@@ -80,4 +81,5 @@ public class EditorService {
             throw new ApiException("Editor Not Found");
         }
     }
+
 }

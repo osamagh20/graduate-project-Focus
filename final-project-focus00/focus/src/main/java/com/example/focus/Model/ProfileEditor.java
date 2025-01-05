@@ -25,8 +25,8 @@ public class ProfileEditor {
     @PositiveOrZero(message = "Number of posts cannot be negative")
     private Integer numberOfPosts;
 
-    @Pattern(regexp = "^(https?|ftp)://[^\s/$.?#].[^\s]*$", message = "Image URL must be valid (http, https, or ftp)")
-    private String image;  // URL of the image
+    @Column(columnDefinition = "varchar(255) not null")
+    private String imageURL;
 
     @OneToOne
     @MapsId
@@ -34,7 +34,7 @@ public class ProfileEditor {
     @JoinColumn(name = "id", referencedColumnName = "id")
     private MyUser myUser;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ProfileEditor")
     private Set<Media> medias;
 
 

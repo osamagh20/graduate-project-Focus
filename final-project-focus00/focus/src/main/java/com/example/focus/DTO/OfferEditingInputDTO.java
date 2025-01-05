@@ -19,9 +19,6 @@ public class OfferEditingInputDTO {
     @NotNull(message = "Request ID cannot be null")
     private Integer requestId;
 
-    @NotNull(message = "Editor ID cannot be null")
-    private Integer editorId;
-
     @NotNull(message = "Offer date cannot be null")
     private LocalDateTime offerDate;
 

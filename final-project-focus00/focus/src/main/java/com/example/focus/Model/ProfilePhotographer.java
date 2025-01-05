@@ -27,7 +27,6 @@ public class ProfilePhotographer {
     @PositiveOrZero(message = "Number of posts cannot be negative")
     private Integer numberOfPosts;
 
-    @Pattern(regexp = "^(https?|ftp)://[^\s/$.?#].[^\s]*$", message = "Image URL must be valid (http, https, or ftp)")
     private String image;  // URL of the image
 
     @OneToOne
@@ -37,7 +36,7 @@ public class ProfilePhotographer {
     private MyUser myUser;
 
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "profile")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ProfilePhotographer")
     private Set<Media> medias;
 
 }

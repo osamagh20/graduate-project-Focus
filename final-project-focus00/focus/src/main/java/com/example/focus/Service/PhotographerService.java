@@ -2,6 +2,7 @@ package com.example.focus.Service;
 
 import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.*;
+
 import com.example.focus.Model.*;
 import com.example.focus.Repository.*;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +19,12 @@ public class PhotographerService {
     private final MyUserRepository myUserRepository;
     private final PhotographerRepository photographerRepository;
     private final ProfilePhotographerRepository profilePhotographerRepository;
-    private final MyOrderRepository myOrderRepository;
     private final RentToolsRepository rentToolsRepository;
     private final ToolRepository toolRepository;
     private final StudioRepository studioRepository;
 
 
-    public List<PhotographerDTO> getAllPhotographers() {
+    public  List<PhotographerDTO> getAllPhotographers() {
         List<Photographer> photographers = photographerRepository.findAll();
         List<PhotographerDTO> photographerDTOS = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class PhotographerService {
 
 
     public void PhotographerRegistration(PhotographerDTOin photographerDTOin) {
-       // String hashPass=new BCryptPasswordEncoder().encode(photographer.getPassword());
+        // String hashPass=new BCryptPasswordEncoder().encode(photographer.getPassword());
 
         MyUser checkUsername =myUserRepository.findMyUserByUsername(photographerDTOin.getUsername());
         MyUser checkEmail =myUserRepository.findMyUserByEmail(photographerDTOin.getEmail());
@@ -71,7 +71,7 @@ public class PhotographerService {
         ProfilePhotographer profilePhotographer = new ProfilePhotographer();
         profilePhotographer.setMyUser(user);
         profilePhotographer.setNumberOfPosts(0);
-         profilePhotographerRepository.save(profilePhotographer);
+        profilePhotographerRepository.save(profilePhotographer);
 
     }
 
@@ -94,13 +94,13 @@ public class PhotographerService {
 
 
     public void deletePhotographer(Integer id) {
-  MyUser myUser=myUserRepository.findMyUserById(id);
-    if(myUser!=null) {
-    myUserRepository.delete(myUser);
-    }else{
-    throw new ApiException("Photographer Not Found");
-     }
+        MyUser myUser=myUserRepository.findMyUserById(id);
+        if(myUser!=null) {
+            myUserRepository.delete(myUser);
+        }else{
+            throw new ApiException("Photographer Not Found");
         }
+    }
 
     public void rentToolRequest(Integer photographer_id, Integer tool_id, RentToolsDTOIn rentTool) {
         Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
@@ -119,7 +119,7 @@ public class PhotographerService {
 
         for (RentTools existingRent : rentToolsRepository.findAll()) {
             for(int i=0;i<rentToolsRepository.findAll().size();i++) {
-                if (tool_id.equals(rentToolsRepository.findAll().get(i).getId()))  {
+                if (tool_id.equals(rentToolsRepository.findAll().get(i).getTool().getId()))  {
                     if (!(rentTool.getEndDate().isBefore(existingRent.getStartDate()) || rentTool.getStartDate().isAfter(existingRent.getEndDate()))) {
                         throw new ApiException("This tool is rented now for another photographer.");
                     }
@@ -128,11 +128,17 @@ public class PhotographerService {
 
         }
 
+        if (rentTool.getStartDate().isAfter(rentTool.getEndDate())) {
+            throw new ApiException("The start date after end date.");
+        }
+
         long daysBetween = ChronoUnit.DAYS.between(rentTool.getStartDate(), rentTool.getEndDate());
-        Double totalPrice = tool.getRentalPrice()*daysBetween;
+        Double totalPrice = tool.getRentalPrice()*(daysBetween+1);
         rentTool.setRentPrice(totalPrice);
 
+
         RentTools rentTools = new RentTools();
+        tool.setNumberOfRentals(tool.getNumberOfRentals()+1);
         rentTools.setStartDate(rentTool.getStartDate());
         rentTools.setEndDate(rentTool.getEndDate());
         rentTools.setOwner(tool.getPhotographer());
@@ -154,13 +160,12 @@ public class PhotographerService {
         for (RentTools rentTool : rentTools) {
             if (rentTool.getRenter().getId().equals(photographer.getId())) {
                 Tool tool = rentTool.getTool();
-                ToolDTO toolDTO = new ToolDTO(tool.getName(),tool.getDescription(),tool.getCategory(),tool.getBrand(),tool.getToolCondition(),tool.getRentalPrice(),tool.getImageURL(),tool.getPhotographer().getId());
+                ToolDTO toolDTO = new ToolDTO(tool.getName(),tool.getDescription(),tool.getCategory(),tool.getBrand(),tool.getNumberOfRentals(),tool.getModelNumber(),tool.getRentalPrice(),tool.getImageURL());
                 toolDTOS.add(toolDTO);
                 return toolDTOS;
             }
         }
         throw new ApiException("photographer not have rent tools");
-
     }
 
     // view rental tools photographer rent from owner
@@ -175,7 +180,7 @@ public class PhotographerService {
         for (RentTools rentTool : rentTools) {
             if (rentTool.getOwner().getId().equals(photographer.getId())) {
                 Tool tool = rentTool.getTool();
-                ToolDTO toolDTO = new ToolDTO(tool.getName(),tool.getDescription(),tool.getCategory(),tool.getBrand(),tool.getToolCondition(),tool.getRentalPrice(),tool.getImageURL(),tool.getPhotographer().getId());
+                ToolDTO toolDTO = new ToolDTO(tool.getName(),tool.getDescription(),tool.getCategory(),tool.getBrand(),tool.getNumberOfRentals(),tool.getModelNumber(),tool.getRentalPrice(),tool.getImageURL());
                 toolDTOS.add(toolDTO);
                 return toolDTOS;
             }
@@ -184,52 +189,7 @@ public class PhotographerService {
 
     }
 
-    public List<StudioDTO> getStudiosByCity(Integer photographer_id, String city) {
-        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
-        if(photographer==null) {
-            throw new ApiException("photographer not found");
-        }
-        List<Studio> studios = studioRepository.findStudioByCity(city);
-        if(studios==null) {
-            throw new ApiException("not found studio in this city");
-        }
-
-        List<StudioDTO> studioDTOS = new ArrayList<>();
-        for (Studio studio : studios) {
-            StudioDTO studioDTO1 = new StudioDTO();
-            studioDTO1.setName(studio.getName());
-            studioDTO1.setUsername(studio.getMyUser().getUsername());
-            studioDTO1.setPhoneNumber(studio.getPhoneNumber());
-            studioDTO1.setEmail(studio.getMyUser().getEmail());
-            studioDTO1.setAddress(studio.getAddress());
-            studioDTO1.setStatus(studio.getStatus());
-            studioDTO1.setCommercialRecord(studio.getCommercialRecord());
-            studioDTO1.setCity(studio.getCity());
-            studioDTOS.add(studioDTO1);
-        }
-        return studioDTOS;
-    }
-
-    public StudioDTO getSpecificStudio(Integer photographer_id,Integer studio_id) {
-        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
-        if(photographer==null) {
-            throw new ApiException("photographer not found");
-        }
-        Studio studio = studioRepository.findStudioById(studio_id);
-        if(studio==null) {
-            throw new ApiException("studio not found");
-        }
-        StudioDTO studioDTO = new StudioDTO();
-        studioDTO.setName(studio.getName());
-        studioDTO.setUsername(studio.getMyUser().getUsername());
-        studioDTO.setPhoneNumber(studio.getPhoneNumber());
-        studioDTO.setEmail(studio.getMyUser().getEmail());
-        studioDTO.setAddress(studio.getAddress());
-        studioDTO.setStatus(studio.getStatus());
-        studioDTO.setCommercialRecord(studio.getCommercialRecord());
-        studioDTO.setCity(studio.getCity());
-        return studioDTO;
-    }
 
 
-    }
+
+}

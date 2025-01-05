@@ -5,15 +5,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.coyote.Request;
+import lombok.*;
 import org.springframework.context.annotation.Profile;
 
 import java.util.Set;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -31,12 +29,9 @@ public class Photographer {
     @Column(columnDefinition = "varchar(20) not null")
     private String phone;
 
-
-
     @OneToOne
     @MapsId
     @JsonIgnore
-    @JoinColumn(name = "photographer_id", referencedColumnName = "id")
     private MyUser myUser;
 
 //    @OneToOne(cascade = CascadeType.ALL)
@@ -45,27 +40,19 @@ public class Photographer {
 //    private ProfilePhotographer profilePhotographer;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "photographer")
+    @JsonIgnore
     private Set<Tool> tools;
 
     @OneToMany(mappedBy = "renter")
     private Set<RentTools> myOrders;  // Orders for tools this photographer rents from others
 
     @OneToMany(mappedBy = "owner")
-    private Set<RentTools> rentalTools;
+    private Set<RentTools> rentalTools; // Rental transactions for tools this photographer owns
 
     @OneToMany(mappedBy = "photographer")
     private Set<RequestEditing> requests;
 
 
-
-
-
-
-//    @OneToMany(mappedBy = "renter")
-//    private Set<RentTools> myOrders;  // Orders for tools this photographer rents from others
-//
-//    @OneToMany(mappedBy = "owner")
-//    private Set<RentTools> rentalTools; // Rental transactions for tools this photographer owns
 
 
 }

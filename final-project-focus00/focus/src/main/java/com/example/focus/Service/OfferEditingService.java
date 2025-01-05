@@ -4,7 +4,11 @@ import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.OfferEditingInputDTO;
 import com.example.focus.DTO.OfferEditingOutputDTO;
 import com.example.focus.Model.OfferEditing;
+import com.example.focus.Model.Photographer;
+import com.example.focus.Model.RequestEditing;
+import com.example.focus.Repository.EditorRepository;
 import com.example.focus.Repository.OfferEditingRepository;
+import com.example.focus.Repository.PhotographerRepository;
 import com.example.focus.Repository.RequestEditingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,9 +22,20 @@ public class OfferEditingService {
 
     private final OfferEditingRepository offerEditingRepository;
     private final RequestEditingRepository requestEditingRepository;
+    private final EditorRepository editorRepository;
+    private final PhotographerRepository photographerRepository;
 
     public List<OfferEditingOutputDTO> getAllOffers() {
         List<OfferEditing> offers = offerEditingRepository.findAll();
+        List<OfferEditingOutputDTO> offerDTOs = new ArrayList<>();
+        for (OfferEditing offer : offers) {
+            offerDTOs.add(convertToDTO(offer));
+        }
+        return offerDTOs;
+    }
+
+    public List<OfferEditingOutputDTO> getEditorOffers(Integer editorId) {
+        List<OfferEditing> offers = offerEditingRepository.findOfferEditingByEditor_Id(editorId);
         List<OfferEditingOutputDTO> offerDTOs = new ArrayList<>();
         for (OfferEditing offer : offers) {
             offerDTOs.add(convertToDTO(offer));
@@ -33,13 +48,25 @@ public class OfferEditingService {
         return convertToDTO(offer);
     }
 
-    public OfferEditingOutputDTO createOffer(OfferEditingInputDTO offerInput) {
+    public OfferEditingOutputDTO createOffer(OfferEditingInputDTO offerInput, Integer editorId) {
+        if (editorRepository.findEditorById(editorId) == null) {
+            throw new ApiException("Editor not found");
+        }
+
         OfferEditing offer = new OfferEditing();
+
         offer.setRequestEditing(requestEditingRepository.findById(offerInput.getRequestId())
                 .orElseThrow(() -> new ApiException("Request not found")));
+        RequestEditing request = requestEditingRepository.findRequestEditingById(offerInput.getRequestId());
+
+        if (!"AwaitingOffer".equals(request.getStatus())){
+            throw new ApiException("Request is not AwaitingOffer");
+        }
 
         offer.setOfferDate(offerInput.getOfferDate());
+        offer.setRequestEditing(requestEditingRepository.findRequestEditingById(offerInput.getRequestId()));
         offer.setOfferedPrice(offerInput.getOfferedPrice());
+        offer.setEditor(editorRepository.findEditorById(editorId));
         offer.setEstimatedCompletionTime(offerInput.getEstimatedCompletionTime());
         offer.setStatus("Applied");
 
@@ -59,10 +86,14 @@ public class OfferEditingService {
         offerEditingRepository.delete(offer);
     }
 
-    public OfferEditingOutputDTO acceptOffer(Integer offerId) {
+    public OfferEditingOutputDTO acceptOffer(Integer offerId,Integer photographerId) {
+        Photographer photographer= photographerRepository.findPhotographersById(photographerId);
+
         OfferEditing offer = offerEditingRepository.findById(offerId)
                 .orElseThrow(() -> new ApiException("Offer not found"));
-
+        if (offer.getRequestEditing().getPhotographer()!=photographer){
+            throw new ApiException("You are not the request owner of this request");
+        }
         if (!"Applied".equals(offer.getStatus())) {
             throw new ApiException("Only offers with 'Applied' status can be accepted.");
         }
@@ -74,9 +105,14 @@ public class OfferEditingService {
         return convertToDTO(offer);
     }
 
-    public OfferEditingOutputDTO rejectOffer(Integer offerId) {
-        OfferEditing offer = offerEditingRepository.findById(offerId)
-                .orElseThrow(() -> new ApiException("Offer not found"));
+    public OfferEditingOutputDTO rejectOffer(Integer offerId,Integer photographerId) {
+
+        Photographer photographer= photographerRepository.findPhotographersById(photographerId);
+        OfferEditing offer = offerEditingRepository.findById(offerId).orElseThrow(() -> new ApiException("Offer not found"));
+
+        if (offer.getRequestEditing().getPhotographer()!=photographer){
+            throw new ApiException("You are not the request owner of this request");
+        }
 
         if (!"Applied".equals(offer.getStatus())) {
             throw new ApiException("Only offers with 'Applied' status can be rejected.");
@@ -94,6 +130,7 @@ public class OfferEditingService {
         dto.setOfferDate(offer.getOfferDate());
         dto.setOfferedPrice(offer.getOfferedPrice());
         dto.setEstimatedCompletionTime(offer.getEstimatedCompletionTime());
+        dto.setEditorName(offer.getEditor().getName());
         dto.setStatus(offer.getStatus());
         return dto;
     }

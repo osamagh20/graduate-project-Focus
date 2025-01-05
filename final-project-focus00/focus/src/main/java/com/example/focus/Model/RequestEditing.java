@@ -52,4 +52,9 @@ public class RequestEditing {
     @ManyToOne
     @JoinColumn(name = "photographer_id")
     private Photographer photographer;
+
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "requestEditing")
+    private Set<Media> medias;
+
 }
