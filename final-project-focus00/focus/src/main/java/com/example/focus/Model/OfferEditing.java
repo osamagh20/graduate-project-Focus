@@ -19,7 +19,7 @@ public class OfferEditing {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "request_id", insertable = false, updatable = false) // Fix: Mark as non-insertable and non-updatable
+    @JoinColumn(name = "request_id", nullable = false)
     private RequestEditing requestEditing;
 
     @Column(nullable = false)

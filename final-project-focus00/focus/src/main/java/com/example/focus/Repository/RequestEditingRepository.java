@@ -8,6 +8,7 @@ import java.util.List;
 public interface RequestEditingRepository extends JpaRepository<RequestEditing, Integer> {
 
     List<RequestEditing> findByStatus(String status);
+    RequestEditing findRequestEditingById(Integer id);
     List<RequestEditing> findRequestEditingsByEditor_Id(Integer id);
     List<RequestEditing> findRequestEditingsByPhotographerId(Integer id);
 

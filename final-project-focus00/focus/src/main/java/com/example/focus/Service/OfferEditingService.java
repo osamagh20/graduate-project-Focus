@@ -29,6 +29,7 @@ public class OfferEditingService {
         }
         return offerDTOs;
     }
+
     public List<OfferEditingOutputDTO> getEditorOffers(Integer editorId) {
         List<OfferEditing> offers = offerEditingRepository.findOfferEditingByEditor_Id(editorId);
         List<OfferEditingOutputDTO> offerDTOs = new ArrayList<>();
@@ -43,15 +44,18 @@ public class OfferEditingService {
         return convertToDTO(offer);
     }
 
-    public OfferEditingOutputDTO createOffer(OfferEditingInputDTO offerInput,Integer editorId) {
+    public OfferEditingOutputDTO createOffer(OfferEditingInputDTO offerInput, Integer editorId) {
         if (editorRepository.findEditorById(editorId) == null) {
             throw new ApiException("Editor not found");
         }
+
         OfferEditing offer = new OfferEditing();
+
         offer.setRequestEditing(requestEditingRepository.findById(offerInput.getRequestId())
                 .orElseThrow(() -> new ApiException("Request not found")));
 
         offer.setOfferDate(offerInput.getOfferDate());
+        offer.setRequestEditing(requestEditingRepository.findRequestEditingById(offerInput.getRequestId()));
         offer.setOfferedPrice(offerInput.getOfferedPrice());
         offer.setEditor(editorRepository.findEditorById(editorId));
         offer.setEstimatedCompletionTime(offerInput.getEstimatedCompletionTime());
