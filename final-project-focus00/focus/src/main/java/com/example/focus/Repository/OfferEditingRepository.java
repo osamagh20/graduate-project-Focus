@@ -7,7 +7,10 @@ import java.util.List;
 
 public interface OfferEditingRepository extends JpaRepository<OfferEditing, Integer> {
 
-    List<OfferEditing> findByStatus(String status);
+    List<OfferEditing> findOfferEditingByEditor_IdAndStatus(Integer editorId, String status);
+    List<OfferEditing> findOfferEditingByEditor_Id(Integer editorId);
+    OfferEditing findOfferEditingById(Integer id);
+
 
     List<OfferEditing> findByRequestEditingId(Integer requestId);
 }

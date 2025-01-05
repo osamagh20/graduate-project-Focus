@@ -1,9 +1,12 @@
 package com.example.focus.Service;
 
+import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.RequestEditingInputDTO;
 import com.example.focus.DTO.RequestEditingOutputDTO;
 import com.example.focus.Model.RequestEditing;
+import com.example.focus.Model.Editor;
 import com.example.focus.Repository.RequestEditingRepository;
+import com.example.focus.Repository.EditorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,21 +18,7 @@ import java.util.List;
 public class RequestEditingService {
 
     private final RequestEditingRepository requestEditingRepository;
-
-    public RequestEditingOutputDTO createRequest(RequestEditingInputDTO requestEditingInputDTO) {
-        RequestEditing requestEditing = new RequestEditing();
-        requestEditing.setEstimatedCompletionDate(requestEditingInputDTO.getEstimatedCompletionDate());
-        requestEditing.setDescription(requestEditingInputDTO.getDescription());
-        requestEditing.setFullCameraName(requestEditingInputDTO.getFullCameraName());
-        requestEditing.setSensorSize(requestEditingInputDTO.getSensorSize());
-        requestEditing.setKitLens(requestEditingInputDTO.getKitLens());
-        requestEditing.setViewFinder(requestEditingInputDTO.getViewFinder());
-        requestEditing.setNativeISO(requestEditingInputDTO.getNativeISO());
-        requestEditing.setStatus(requestEditingInputDTO.getStatus());
-
-        RequestEditing savedRequest = requestEditingRepository.save(requestEditing);
-        return convertToDTO(savedRequest);
-    }
+    private final EditorRepository editorRepository;
 
     public List<RequestEditingOutputDTO> getAllRequests() {
         List<RequestEditing> requests = requestEditingRepository.findAll();
@@ -41,46 +30,83 @@ public class RequestEditingService {
     }
 
     public RequestEditingOutputDTO getRequestById(Integer id) {
-        RequestEditing requestEditing = requestEditingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Request not found"));
-        return convertToDTO(requestEditing);
+        RequestEditing request = requestEditingRepository.findById(id).orElse(null);
+        if (request == null) {
+            throw new ApiException("Request not found");
+        }
+        return convertToDTO(request);
     }
 
-    public RequestEditingOutputDTO updateRequest(Integer id, RequestEditingInputDTO requestEditingInputDTO) {
-        RequestEditing requestEditing = requestEditingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Request not found"));
+    public RequestEditingOutputDTO createRequest(RequestEditingInputDTO requestInput) {
+        Editor editor = editorRepository.findById(requestInput.getEditorId())
+                .orElseThrow(() -> new ApiException("Editor not found"));
 
-        requestEditing.setEstimatedCompletionDate(requestEditingInputDTO.getEstimatedCompletionDate());
-        requestEditing.setDescription(requestEditingInputDTO.getDescription());
-        requestEditing.setFullCameraName(requestEditingInputDTO.getFullCameraName());
-        requestEditing.setSensorSize(requestEditingInputDTO.getSensorSize());
-        requestEditing.setKitLens(requestEditingInputDTO.getKitLens());
-        requestEditing.setViewFinder(requestEditingInputDTO.getViewFinder());
-        requestEditing.setNativeISO(requestEditingInputDTO.getNativeISO());
-        requestEditing.setStatus(requestEditingInputDTO.getStatus());
+        RequestEditing request = new RequestEditing();
+        request.setEstimatedCompletionDate(requestInput.getEstimatedCompletionDate());
+        request.setDescription(requestInput.getDescription());
+        request.setFullCameraName(requestInput.getFullCameraName());
+        request.setSensorSize(requestInput.getSensorSize());
+        request.setKitLens(requestInput.getKitLens());
+        request.setViewFinder(requestInput.getViewFinder());
+        request.setNativeISO(requestInput.getNativeISO());
+        request.setStatus("Pending");
+        request.setEditor(editor);
 
-        RequestEditing updatedRequest = requestEditingRepository.save(requestEditing);
-        return convertToDTO(updatedRequest);
+        return convertToDTO(requestEditingRepository.save(request));
+    }
+
+    public RequestEditingOutputDTO updateRequest(Integer id, RequestEditingInputDTO requestInput) {
+        RequestEditing request = requestEditingRepository.findById(id).orElse(null);
+        if (request == null) {
+            throw new ApiException("Request not found");
+        }
+
+        request.setEstimatedCompletionDate(requestInput.getEstimatedCompletionDate());
+        request.setDescription(requestInput.getDescription());
+        request.setFullCameraName(requestInput.getFullCameraName());
+        request.setSensorSize(requestInput.getSensorSize());
+        request.setKitLens(requestInput.getKitLens());
+        request.setViewFinder(requestInput.getViewFinder());
+        request.setNativeISO(requestInput.getNativeISO());
+        request.setStatus(requestInput.getStatus());
+
+        return convertToDTO(requestEditingRepository.save(request));
     }
 
     public void deleteRequest(Integer id) {
-        RequestEditing requestEditing = requestEditingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Request not found"));
-
-        requestEditingRepository.delete(requestEditing);
+        RequestEditing request = requestEditingRepository.findById(id).orElse(null);
+        if (request == null) {
+            throw new ApiException("Request not found");
+        }
+        requestEditingRepository.delete(request);
     }
 
-    private RequestEditingOutputDTO convertToDTO(RequestEditing requestEditing) {
-        return new RequestEditingOutputDTO(
-                requestEditing.getId(),
-                requestEditing.getEstimatedCompletionDate(),
-                requestEditing.getDescription(),
-                requestEditing.getFullCameraName(),
-                requestEditing.getSensorSize(),
-                requestEditing.getKitLens(),
-                requestEditing.getViewFinder(),
-                requestEditing.getNativeISO(),
-                requestEditing.getStatus()
-        );
+    public List<RequestEditingOutputDTO> getRequestsByEditorId(Integer editorId) {
+        Editor editor = editorRepository.findById(editorId).orElse(null);
+        if (editor == null) {
+            throw new ApiException("Editor not found");
+        }
+
+        List<RequestEditing> requests = requestEditingRepository.findRequestEditingsByEditor_Id(editorId);
+        List<RequestEditingOutputDTO> requestDTOs = new ArrayList<>();
+        for (RequestEditing request : requests) {
+            requestDTOs.add(convertToDTO(request));
+        }
+        return requestDTOs;
+    }
+
+    private RequestEditingOutputDTO convertToDTO(RequestEditing request) {
+        RequestEditingOutputDTO dto = new RequestEditingOutputDTO();
+        dto.setId(request.getId());
+        dto.setEstimatedCompletionDate(request.getEstimatedCompletionDate());
+        dto.setDescription(request.getDescription());
+        dto.setFullCameraName(request.getFullCameraName());
+        dto.setSensorSize(request.getSensorSize());
+        dto.setKitLens(request.getKitLens());
+        dto.setViewFinder(request.getViewFinder());
+        dto.setNativeISO(request.getNativeISO());
+        dto.setEditorId(request.getEditor().getId());
+        dto.setStatus(request.getStatus());
+        return dto;
     }
 }

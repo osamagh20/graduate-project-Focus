@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -39,5 +40,16 @@ public class RequestEditing {
     private String nativeISO;
 
     @Column(nullable = false)
-    private String status; // Pending, Completed, Cancelled, etc.
+    private String status;
+
+    @ManyToOne
+    @JoinColumn(name = "editor_id", nullable = false)
+    private Editor editor;
+
+    @OneToMany(mappedBy = "requestEditing") // Fix: Use `mappedBy` for bidirectional mapping
+    private Set<OfferEditing> offerEditings;
+
+    @ManyToOne
+    @JoinColumn(name = "photographer_id")
+    private Photographer photographer;
 }

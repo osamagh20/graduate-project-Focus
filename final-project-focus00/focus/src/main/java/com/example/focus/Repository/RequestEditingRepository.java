@@ -8,4 +8,5 @@ import java.util.List;
 public interface RequestEditingRepository extends JpaRepository<RequestEditing, Integer> {
 
     List<RequestEditing> findByStatus(String status);
+    List<RequestEditing> findRequestEditingsByEditor_Id(Integer id);
 }

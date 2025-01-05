@@ -14,8 +14,9 @@ public class OfferEditingOutputDTO {
 
     private Integer id;
     private Integer requestId;
+    private Integer editorId;
     private LocalDateTime offerDate;
     private BigDecimal offeredPrice;
     private LocalDateTime estimatedCompletionTime;
-    private String status;
+    private String status; // Applied, Accepted, Rejected
 }

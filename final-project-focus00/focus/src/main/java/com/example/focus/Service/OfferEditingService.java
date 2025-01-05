@@ -1,11 +1,12 @@
 package com.example.focus.Service;
 
+import com.example.focus.ApiResponse.ApiException;
 import com.example.focus.DTO.OfferEditingInputDTO;
 import com.example.focus.DTO.OfferEditingOutputDTO;
 import com.example.focus.Model.OfferEditing;
-import com.example.focus.Model.RequestEditing;
+import com.example.focus.Model.Editor;
 import com.example.focus.Repository.OfferEditingRepository;
-import com.example.focus.Repository.RequestEditingRepository;
+import com.example.focus.Repository.EditorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,27 +18,7 @@ import java.util.List;
 public class OfferEditingService {
 
     private final OfferEditingRepository offerEditingRepository;
-    private final RequestEditingRepository requestEditingRepository;
-
-    public OfferEditingOutputDTO createOffer(OfferEditingInputDTO offerEditingInputDTO) {
-        RequestEditing requestEditing = validateRequest(offerEditingInputDTO.getRequestId());
-        if (!"Pending".equals(requestEditing.getStatus())) {
-            throw new IllegalArgumentException("Cannot create an offer for this request");
-        }
-
-        OfferEditing offerEditing = new OfferEditing();
-        offerEditing.setRequestEditing(requestEditing);
-        offerEditing.setOfferDate(offerEditingInputDTO.getOfferDate());
-        offerEditing.setOfferedPrice(offerEditingInputDTO.getOfferedPrice());
-        offerEditing.setEstimatedCompletionTime(offerEditingInputDTO.getEstimatedCompletionTime());
-        offerEditing.setStatus("Applied");
-
-        OfferEditing savedOffer = offerEditingRepository.save(offerEditing);
-        requestEditing.setStatus("Offer Sent");
-        requestEditingRepository.save(requestEditing);
-
-        return convertToDTO(savedOffer);
-    }
+    private final EditorRepository editorRepository;
 
     public List<OfferEditingOutputDTO> getAllOffers() {
         List<OfferEditing> offers = offerEditingRepository.findAll();
@@ -49,49 +30,71 @@ public class OfferEditingService {
     }
 
     public OfferEditingOutputDTO getOfferById(Integer id) {
-        OfferEditing offerEditing = offerEditingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Offer not found"));
-        return convertToDTO(offerEditing);
+        OfferEditing offer = offerEditingRepository.findById(id).orElse(null);
+        if (offer == null) {
+            throw new ApiException("Offer not found");
+        }
+        return convertToDTO(offer);
     }
 
-    public OfferEditingOutputDTO updateOffer(Integer id, OfferEditingInputDTO offerEditingInputDTO) {
-        OfferEditing offerEditing = offerEditingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Offer not found"));
+    public OfferEditingOutputDTO createOffer(OfferEditingInputDTO offerInput) {
+        Editor editor = editorRepository.findById(offerInput.getEditorId())
+                .orElseThrow(() -> new ApiException("Editor not found"));
 
-        RequestEditing requestEditing = validateRequest(offerEditingInputDTO.getRequestId());
-        if (!"Pending".equals(requestEditing.getStatus()) && !"Offer Sent".equals(requestEditing.getStatus())) {
-            throw new IllegalArgumentException("Cannot update an offer for this request");
+        OfferEditing offer = new OfferEditing();
+        offer.setEditor(editor);
+        offer.setOfferDate(offerInput.getOfferDate());
+        offer.setOfferedPrice(offerInput.getOfferedPrice());
+        offer.setEstimatedCompletionTime(offerInput.getEstimatedCompletionTime());
+        offer.setStatus("Applied");
+
+        return convertToDTO(offerEditingRepository.save(offer));
+    }
+
+    public OfferEditingOutputDTO updateOffer(Integer id, OfferEditingInputDTO offerInput) {
+        OfferEditing offer = offerEditingRepository.findById(id).orElse(null);
+        if (offer == null) {
+            throw new ApiException("Offer not found");
         }
 
-        offerEditing.setOfferDate(offerEditingInputDTO.getOfferDate());
-        offerEditing.setOfferedPrice(offerEditingInputDTO.getOfferedPrice());
-        offerEditing.setEstimatedCompletionTime(offerEditingInputDTO.getEstimatedCompletionTime());
-        offerEditing.setStatus("Updated");
+        offer.setOfferDate(offerInput.getOfferDate());
+        offer.setOfferedPrice(offerInput.getOfferedPrice());
+        offer.setEstimatedCompletionTime(offerInput.getEstimatedCompletionTime());
+        offer.setStatus(offerInput.getStatus());
 
-        OfferEditing savedOffer = offerEditingRepository.save(offerEditing);
-        return convertToDTO(savedOffer);
+        return convertToDTO(offerEditingRepository.save(offer));
     }
 
     public void deleteOffer(Integer id) {
-        OfferEditing offerEditing = offerEditingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Offer not found"));
-
-        offerEditingRepository.delete(offerEditing);
+        OfferEditing offer = offerEditingRepository.findById(id).orElse(null);
+        if (offer == null) {
+            throw new ApiException("Offer not found");
+        }
+        offerEditingRepository.delete(offer);
     }
 
-    private RequestEditing validateRequest(Integer requestId) {
-        return requestEditingRepository.findById(requestId)
-                .orElseThrow(() -> new IllegalArgumentException("Request not found"));
+    public List<OfferEditingOutputDTO> getOffersByEditorId(Integer editorId) {
+        Editor editor = editorRepository.findById(editorId).orElse(null);
+        if (editor == null) {
+            throw new ApiException("Editor not found");
+        }
+
+        List<OfferEditing> offers = offerEditingRepository.findOfferEditingByEditor_Id(editorId);
+        List<OfferEditingOutputDTO> offerDTOs = new ArrayList<>();
+        for (OfferEditing offer : offers) {
+            offerDTOs.add(convertToDTO(offer));
+        }
+        return offerDTOs;
     }
 
-    private OfferEditingOutputDTO convertToDTO(OfferEditing offerEditing) {
-        OfferEditingOutputDTO offerOutputDTO = new OfferEditingOutputDTO();
-        offerOutputDTO.setId(offerEditing.getId());
-        offerOutputDTO.setRequestId(offerEditing.getRequestEditing().getId());
-        offerOutputDTO.setOfferDate(offerEditing.getOfferDate());
-        offerOutputDTO.setOfferedPrice(offerEditing.getOfferedPrice());
-        offerOutputDTO.setEstimatedCompletionTime(offerEditing.getEstimatedCompletionTime());
-        offerOutputDTO.setStatus(offerEditing.getStatus());
-        return offerOutputDTO;
+    private OfferEditingOutputDTO convertToDTO(OfferEditing offer) {
+        OfferEditingOutputDTO dto = new OfferEditingOutputDTO();
+        dto.setId(offer.getId());
+        dto.setEditorId(offer.getEditor().getId());
+        dto.setOfferDate(offer.getOfferDate());
+        dto.setOfferedPrice(offer.getOfferedPrice());
+        dto.setEstimatedCompletionTime(offer.getEstimatedCompletionTime());
+        dto.setStatus(offer.getStatus());
+        return dto;
     }
 }

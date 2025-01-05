@@ -3,6 +3,7 @@ package com.example.focus.DTO;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,9 @@ public class OfferEditingInputDTO {
     @NotNull(message = "Request ID cannot be null")
     private Integer requestId;
 
+    @NotNull(message = "Editor ID cannot be null")
+    private Integer editorId;
+
     @NotNull(message = "Offer date cannot be null")
     private LocalDateTime offerDate;
 
@@ -29,5 +33,9 @@ public class OfferEditingInputDTO {
     private LocalDateTime estimatedCompletionTime;
 
     @NotBlank(message = "Status cannot be blank")
+    @Pattern(
+            regexp = "Applied|Accepted|Rejected",
+            message = "Status must be one of the following: Applied, Accepted, Rejected"
+    )
     private String status; // Applied, Accepted, Rejected
 }

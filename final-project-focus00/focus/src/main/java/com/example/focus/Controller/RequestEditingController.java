@@ -30,9 +30,9 @@ public class RequestEditingController {
         return ResponseEntity.status(200).body(request);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity createRequest(@RequestBody @Valid RequestEditingInputDTO requestEditingInputDTO) {
-        RequestEditingOutputDTO createdRequest = requestEditingService.createRequest(requestEditingInputDTO);
+    @PostMapping("/create/{editorId}/{photoId}")
+    public ResponseEntity createRequest(@RequestBody @Valid RequestEditingInputDTO requestEditingInputDTO,@PathVariable Integer editorId,@PathVariable Integer photoId) {
+        RequestEditingOutputDTO createdRequest = requestEditingService.createRequest(requestEditingInputDTO,editorId,photoId);
         return ResponseEntity.status(200).body(createdRequest);
     }
 

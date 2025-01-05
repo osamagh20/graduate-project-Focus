@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,7 +36,11 @@ public class Editor {
     @JsonIgnore
     private MyUser myUser;
 
+    @OneToMany(mappedBy = "editor")
+    private Set<RequestEditing> requests;
 
+    @OneToMany(mappedBy = "editor")
+    private Set<OfferEditing> offerEditings;
 
     @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn

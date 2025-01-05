@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.coyote.Request;
 import org.springframework.context.annotation.Profile;
 
 import java.util.Set;
@@ -50,7 +51,12 @@ public class Photographer {
     private Set<RentTools> myOrders;  // Orders for tools this photographer rents from others
 
     @OneToMany(mappedBy = "owner")
-    private Set<RentTools> rentalTools; // Rental transactions for tools this photographer owns
+    private Set<RentTools> rentalTools;
+
+    @OneToMany(mappedBy = "photographer")
+    private Set<RequestEditing> requests;
+
+
 
 
 

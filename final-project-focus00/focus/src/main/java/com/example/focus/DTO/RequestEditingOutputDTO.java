@@ -19,5 +19,7 @@ public class RequestEditingOutputDTO {
     private String kitLens;
     private String viewFinder;
     private String nativeISO;
-    private String status;
+    private Integer editorId;
+    private Integer photographerId;
+    private String status; // Pending, Active, Closed, AwaitingOffer
 }
