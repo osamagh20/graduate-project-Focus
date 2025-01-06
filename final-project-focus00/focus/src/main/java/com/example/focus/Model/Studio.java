@@ -35,7 +35,7 @@ public class Studio {
 
     @NotEmpty(message = "commercialRecord")
     @Pattern(regexp = "^7\\d{9}$", message = "commercialRecord must start with 7 and be followed by 9 digits")
-    @Column(columnDefinition = "varchar(9) not null unique")
+    @Column(columnDefinition = "varchar(10) not null unique")
     private String commercialRecord;
 
     @Pattern(regexp = "active|Inactive|rejected")

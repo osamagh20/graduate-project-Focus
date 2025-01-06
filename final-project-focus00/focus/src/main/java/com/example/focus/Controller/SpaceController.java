@@ -49,9 +49,22 @@ public class SpaceController {
         return ResponseEntity.status(200).body(new ApiResponse("created successfully"));
     }
 
-    @GetMapping("/get-specific-spaces/{space_id}")
+    @GetMapping("/get-specific-space/{space_id}")
     public ResponseEntity getSpaceById(@PathVariable Integer space_id){
         SpaceDTO spaceDTOS = spaceService.getSpaceById(space_id);
+        return ResponseEntity.status(200).body(spaceDTOS);
+    }
+
+    @GetMapping("/get-my-spaces/{studio_id}")
+    public ResponseEntity getAllMySpaces(@PathVariable Integer studio_id){
+        List<SpaceDTO> spaceDTOS = spaceService.getAllMySpaces(studio_id);
+        return ResponseEntity.status(200).body(spaceDTOS);
+    }
+
+
+    @GetMapping("/get-available-spaces/{studio_id}")
+    public ResponseEntity getMyAvailableSpaces(@PathVariable Integer studio_id){
+        List<SpaceDTO> spaceDTOS = spaceService.getMyAvailableSpaces(studio_id);
         return ResponseEntity.status(200).body(spaceDTOS);
     }
 

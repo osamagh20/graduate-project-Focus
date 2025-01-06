@@ -13,6 +13,8 @@ import com.example.focus.Repository.RequestEditingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,19 +65,19 @@ public class OfferEditingService {
             throw new ApiException("Request is not AwaitingOffer");
         }
 
-        offer.setOfferDate(offerInput.getOfferDate());
+        offer.setOfferDate(LocalDateTime.now());
         offer.setRequestEditing(requestEditingRepository.findRequestEditingById(offerInput.getRequestId()));
         offer.setOfferedPrice(offerInput.getOfferedPrice());
         offer.setEditor(editorRepository.findEditorById(editorId));
         offer.setEstimatedCompletionTime(offerInput.getEstimatedCompletionTime());
         offer.setStatus("Applied");
+        request.setStatus("HasOffer");
 
         return convertToDTO(offerEditingRepository.save(offer));
     }
 
     public OfferEditingOutputDTO updateOffer(Integer id, OfferEditingInputDTO offerInput) {
         OfferEditing offer = offerEditingRepository.findById(id).orElseThrow(() -> new ApiException("Offer not found"));
-        offer.setOfferDate(offerInput.getOfferDate());
         offer.setOfferedPrice(offerInput.getOfferedPrice());
         offer.setEstimatedCompletionTime(offerInput.getEstimatedCompletionTime());
         return convertToDTO(offerEditingRepository.save(offer));

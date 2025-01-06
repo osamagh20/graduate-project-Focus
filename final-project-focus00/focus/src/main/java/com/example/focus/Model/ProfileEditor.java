@@ -25,7 +25,7 @@ public class ProfileEditor {
     @PositiveOrZero(message = "Number of posts cannot be negative")
     private Integer numberOfPosts;
 
-    @Column(columnDefinition = "varchar(255) not null")
+    @Column(nullable = true)
     private String imageURL;
 
     @OneToOne

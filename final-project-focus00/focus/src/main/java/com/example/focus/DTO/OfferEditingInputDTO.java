@@ -19,9 +19,6 @@ public class OfferEditingInputDTO {
     @NotNull(message = "Request ID cannot be null")
     private Integer requestId;
 
-    @NotNull(message = "Offer date cannot be null")
-    private LocalDateTime offerDate;
-
     @NotNull(message = "Offered price cannot be null")
     @DecimalMin(value = "0.0", inclusive = false, message = "Offered price must be greater than 0")
     private BigDecimal offeredPrice;

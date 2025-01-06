@@ -56,11 +56,6 @@ public class Space {
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Shift> shifts;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean underMaintenance;
-
-    @Column(columnDefinition = "varchar(255)")
-    private String maintenanceReason;
 
     @OneToMany(mappedBy = "space", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BookSpace> bookings;
