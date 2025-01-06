@@ -1,79 +1,110 @@
 package com.example.focus.Service;
 
-import com.example.focus.ApiResponse.ApiException;
+import com.example.focus.DTO.MediaDTO;
 import com.example.focus.Model.Media;
-import com.example.focus.Model.ProfileEditor;
-import com.example.focus.Model.ProfilePhotographer;
 import com.example.focus.Repository.MediaRepository;
-import com.example.focus.Repository.PhotographerRepository;
-import com.example.focus.Repository.ProfileEditorRepository;
-import com.example.focus.Repository.ProfilePhotographerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MediaService {
-private final ProfilePhotographerRepository profilePhotographerRepository;
-private final ProfileEditorRepository profileEditorRepository;
+    private final MediaRepository mediaRepository;
 
+    // إرجاع عدد الفيديوهات لمصور معين
+    public Integer getVideoCountByPhotographer(Integer photographerId) {
+        return mediaRepository.countByProfilePhotographerIdAndMediaType(photographerId, "video");
+    }
 
-private final MediaRepository mediaRepository;
+    // إرجاع عدد الصور لمصور معين
+    public Integer getImageCountByPhotographer(Integer photographerId) {
+        return mediaRepository.countByProfilePhotographerIdAndMediaType(photographerId, "image");
+    }
 
-//
-//    // إرجاع عدد الفيديوهات لمصور معين
-//    public Integer getVideoCountByPhotographer(Integer photographerId) {
-//        return mediaRepository.countByProfilePhotographerIdAndMediaType(photographerId, "video");
-//    }
-//
-//    // إرجاع عدد الصور لمصور معين
-//    public Integer getImageCountByPhotographer(Integer photographerId) {
-//        return mediaRepository.countByProfilePhotographerIdAndMediaType(photographerId, "image");
-//    }
-//
-//    // إرجاع الفيديوهات فقط لمصور معين
-//    public List<Media> getVideosByPhotographer(Integer editorid) {
-//        return mediaRepository.findByProfilePhotographerIdAndMediaType(editorid, "video");
-//    }
-//
-//    // إرجاع الصور فقط لمصور معين
-//    public List<Media> getImagesByPhotographer(Integer photographerId) {
-//        return mediaRepository.findByProfilePhotographerIdAndMediaType(photographerId, "image");
-//    }
-//
-//
-//    //**************************Editor
-//
-//    // إرجاع عدد الفيديوهات editor معين
-//    public Integer getVideoCountByEditor(Integer editorid) {
-//        return mediaRepository.countByProfileEditorIdAndMediaType(editorid, "video");
-//    }
-//
-//    // إرجاع عدد الصور editor معين
-//    public Integer getImageCountByEditor(Integer editorid) {
-//        return mediaRepository.countByProfileEditorIdAndMediaType(editorid, "image");
-//    }
-//
-//    // إرجاع الفيديوهات فقط editor معين
-//    public List<Media> getVideosByEditor(Integer editorid) {
-//        return mediaRepository.findByProfileEditorIdAndMediaType(editorid, "video");
-//    }
-//
-//    // إرجاع الصور فقط editor معين
-//    public List<Media> getImagesByEditor(Integer editorid) {
-//        return mediaRepository.findByProfileEditorIdAndMediaType(editorid, "image");
-//    }
+    // إرجاع الفيديوهات فقط لمصور معين
+    public List<MediaDTO> getVideosByPhotographer(Integer photographerId) {
+        List<Media> mediaList = mediaRepository.findByProfilePhotographerIdAndMediaType(photographerId, "video");
+        List<MediaDTO> mediaDTOList = new ArrayList<>();
 
+        // استخدام for loop لتحويل Media إلى MediaDTO
+        for (Media media : mediaList) {
+            MediaDTO mediaDTO = new MediaDTO(
+                    media.getMediaType(),
+                    media.getMediaURL(),
+                    media.getUploadDate()
+            );
+            mediaDTOList.add(mediaDTO);
+        }
 
+        return mediaDTOList;
+    }
 
+    // إرجاع الصور فقط لمصور معين
+    public List<MediaDTO> getImagesByPhotographer(Integer photographerId) {
+        List<Media> mediaList = mediaRepository.findByProfilePhotographerIdAndMediaType(photographerId, "image");
+        List<MediaDTO> mediaDTOList = new ArrayList<>();
+
+        // استخدام for loop لتحويل Media إلى MediaDTO
+        for (Media media : mediaList) {
+            MediaDTO mediaDTO = new MediaDTO(
+                    media.getMediaType(),
+                    media.getMediaURL(),
+                    media.getUploadDate()
+            );
+            mediaDTOList.add(mediaDTO);
+        }
+
+        return mediaDTOList;
+    }
+
+    //**************************Editor
+
+    // إرجاع عدد الفيديوهات editor معين
+    public Integer getVideoCountByEditor(Integer editorId) {
+        return mediaRepository.countByProfileEditorIdAndMediaType(editorId, "video");
+    }
+
+    // إرجاع عدد الصور editor معين
+    public Integer getImageCountByEditor(Integer editorId) {
+        return mediaRepository.countByProfileEditorIdAndMediaType(editorId, "image");
+    }
+
+    // إرجاع الفيديوهات فقط editor معين
+    public List<MediaDTO> getVideosByEditor(Integer editorId) {
+        List<Media> mediaList = mediaRepository.findByProfileEditorIdAndMediaType(editorId, "video");
+        List<MediaDTO> mediaDTOList = new ArrayList<>();
+
+        // استخدام for loop لتحويل Media إلى MediaDTO
+        for (Media media : mediaList) {
+            MediaDTO mediaDTO = new MediaDTO(
+                    media.getMediaType(),
+                    media.getMediaURL(),
+                    media.getUploadDate()
+            );
+            mediaDTOList.add(mediaDTO);
+        }
+
+        return mediaDTOList;
+    }
+
+    // إرجاع الصور فقط editor معين
+    public List<MediaDTO> getImagesByEditor(Integer editorId) {
+        List<Media> mediaList = mediaRepository.findByProfileEditorIdAndMediaType(editorId, "image");
+        List<MediaDTO> mediaDTOList = new ArrayList<>();
+
+        // استخدام for loop لتحويل Media إلى MediaDTO
+        for (Media media : mediaList) {
+            MediaDTO mediaDTO = new MediaDTO(
+                    media.getMediaType(),
+                    media.getMediaURL(),
+                    media.getUploadDate()
+            );
+            mediaDTOList.add(mediaDTO);
+        }
+
+        return mediaDTOList;
+    }
 }

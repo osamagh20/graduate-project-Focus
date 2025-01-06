@@ -127,17 +127,74 @@ public class BookSpaceService {
         return convertToDTO(bookSpaceRepository.save(booking));
     }
 
-    public void deleteBooking(Integer id) {
+    public void CancelBooking(Integer id) {
         BookSpace booking = bookSpaceRepository.findById(id).orElse(null);
         if (booking == null) {
             throw new IllegalArgumentException("Booking not found");
         }
+
         Shift shift = booking.getShift();
-        if (shift != null) {
+        if (shift == null) {
+            throw new IllegalStateException("Shift not found for the booking");
+        }
+
+        Shift otherShift;
+        if (shift.getName().equalsIgnoreCase("Night Shift")) {
+            otherShift = shiftRepository.findShiftBySpaceIdAndDateAndName(
+                    booking.getSpace().getId(),
+                    shift.getDate(),
+                    "Morning Shift");
+        } else {
+            otherShift = shiftRepository.findShiftBySpaceIdAndDateAndName(
+                    booking.getSpace().getId(),
+                    shift.getDate(),
+                    "Night Shift");
+        }
+
+        Shift fullDayShift = shiftRepository.findShiftBySpaceIdAndDateAndName(
+                booking.getSpace().getId(),
+                shift.getDate(),
+                "Full Day");
+
+        if (shift.getName().equalsIgnoreCase("Full Day")) {
+            if (fullDayShift != null) {
+                fullDayShift.setStatus("Available");
+                shiftRepository.save(fullDayShift);
+
+                Shift morningShift = shiftRepository.findShiftBySpaceIdAndDateAndName(
+                        booking.getSpace().getId(),
+                        shift.getDate(),
+                        "Morning Shift");
+
+                Shift nightShift = shiftRepository.findShiftBySpaceIdAndDateAndName(
+                        booking.getSpace().getId(),
+                        shift.getDate(),
+                        "Night Shift");
+
+                if (morningShift != null) {
+                    morningShift.setStatus("Available");
+                    shiftRepository.save(morningShift);
+                }
+
+                if (nightShift != null) {
+                    nightShift.setStatus("Available");
+                    shiftRepository.save(nightShift);
+                }
+            }
+        } else {
             shift.setStatus("Available");
             shiftRepository.save(shift);
+
+            if (otherShift == null || otherShift.getStatus().equalsIgnoreCase("Available")) {
+                if (fullDayShift != null) {
+                    fullDayShift.setStatus("Available");
+                    shiftRepository.save(fullDayShift);
+                }
+            }
         }
-        bookSpaceRepository.delete(booking);
+
+        booking.setStatus("Cancelled");
+        bookSpaceRepository.save(booking);
     }
 
 

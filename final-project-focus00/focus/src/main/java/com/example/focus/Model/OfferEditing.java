@@ -22,7 +22,7 @@ public class OfferEditing {
     @JoinColumn(name = "request_id", nullable = false)
     private RequestEditing requestEditing;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime offerDate;
 
     @Column(nullable = false)

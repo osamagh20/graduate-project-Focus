@@ -66,12 +66,14 @@ public class PhotographerService {
         photographer.setName(photographerDTOin.getName());
         photographer.setCity(photographerDTOin.getCity());
         photographer.setPhone(photographerDTOin.getPhoneNumber());
-        photographerRepository.save(photographer);
+
 
         ProfilePhotographer profilePhotographer = new ProfilePhotographer();
         profilePhotographer.setMyUser(user);
         profilePhotographer.setNumberOfPosts(0);
         profilePhotographerRepository.save(profilePhotographer);
+        photographerRepository.save(photographer);
+        myUserRepository.save(user);
 
     }
 
@@ -95,6 +97,13 @@ public class PhotographerService {
 
     public void deletePhotographer(Integer id) {
         MyUser myUser=myUserRepository.findMyUserById(id);
+        Photographer photographer=photographerRepository.findPhotographersById(id);
+       // photographer.setMyUser(null);
+        ProfilePhotographer profilePhotographer=profilePhotographerRepository.findProfilePhotographerById(id);
+       // profilePhotographer.setMyUser(null);
+        myUser.setPhotographer(null);
+        myUser.setProfilePhotographer(null);
+
         if(myUser!=null) {
             myUserRepository.delete(myUser);
         }else{
@@ -188,8 +197,5 @@ public class PhotographerService {
         throw new ApiException("photographer not have rental tools");
 
     }
-
-
-
 
 }

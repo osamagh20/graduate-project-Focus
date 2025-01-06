@@ -54,9 +54,9 @@ public class OfferEditingController {
         return ResponseEntity.status(200).body(new ApiResponse("Offer deleted successfully"));
     }
 
-    @PutMapping("/accept/{offerId}")
-    public ResponseEntity acceptOffer(@PathVariable Integer offerId, MyUser auth) {
-        OfferEditingOutputDTO acceptedOffer = offerEditingService.acceptOffer(offerId,auth.getId());
+    @PutMapping("/accept/{offerId}/{photograperid}")
+    public ResponseEntity acceptOffer(@PathVariable Integer offerId,@PathVariable Integer photograperid) {
+        OfferEditingOutputDTO acceptedOffer = offerEditingService.acceptOffer(offerId,photograperid);
         return ResponseEntity.status(200).body(acceptedOffer);
     }
 

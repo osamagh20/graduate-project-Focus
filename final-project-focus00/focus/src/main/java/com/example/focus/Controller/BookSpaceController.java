@@ -48,10 +48,10 @@ public class BookSpaceController {
 //        return ResponseEntity.status(200).body(booking);
 //    }
 
-    @DeleteMapping("/delete-booking/{id}")
-    public ResponseEntity deleteBooking(@PathVariable Integer id) {
-        bookSpaceService.deleteBooking(id);
-        return ResponseEntity.status(200).body(new ApiResponse("Booking deleted successfully"));
+    @PutMapping("/cancel-booking/{id}")
+    public ResponseEntity CancelBooking(@PathVariable Integer id) {
+        bookSpaceService.CancelBooking(id);
+        return ResponseEntity.status(200).body(new ApiResponse("Booking Canceled successfully"));
     }
 
     @PutMapping("/update-booking-status/{id}")

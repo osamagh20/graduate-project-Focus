@@ -36,14 +36,19 @@ public class StudioService {
         for (Studio studio : studios){
             StudioDTO studioDTO = new StudioDTO();
             studioDTO.setName(studio.getName());
+            studioDTO.setUsername(studio.getMyUser().getUsername());
+            studioDTO.setEmail(studio.getMyUser().getEmail());
+            studioDTO.setPhoneNumber(studio.getPhoneNumber());
             studioDTO.setCity(studio.getCity());
             studioDTO.setAddress(studio.getAddress());
             studioDTO.setCommercialRecord(studio.getCommercialRecord());
             studioDTO.setStatus(studio.getStatus());
+            studio.setImageURL(studio.getImageURL());
             studioDTOS.add(studioDTO);
         }
         return studioDTOS;
     }
+
     public void registerStudio(StudioDTOIn studioDTOIn){
         MyUser checkUsername =myUserRepository.findMyUserByUsername(studioDTOIn.getUsername());
         MyUser checkEmail =myUserRepository.findMyUserByEmail(studioDTOIn.getEmail());
@@ -59,7 +64,7 @@ public class StudioService {
         user.setEmail(studioDTOIn.getEmail());
         user.setPassword(studioDTOIn.getPassword());
         user.setRole("STUDIO");
-        myUserRepository.save(user);
+
 
         Studio studio=new Studio();
         studio.setMyUser(user);
@@ -69,7 +74,9 @@ public class StudioService {
         studio.setPhoneNumber(studioDTOIn.getPhoneNumber());
         studio.setAddress(studioDTOIn.getAddress());
         studio.setStatus("Inactive");
+
         studioRepository.save(studio);
+        myUserRepository.save(user);
 
 
        // profileStudioRepository.save(profileStudio);

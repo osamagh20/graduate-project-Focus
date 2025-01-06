@@ -43,7 +43,7 @@ public class MyUser /*implements UserDetails */{
     @Column(columnDefinition = "varchar(14) ")
     private String role;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Photographer photographer;
 
@@ -52,7 +52,7 @@ public class MyUser /*implements UserDetails */{
     @JsonIgnore
     private ProfilePhotographer profilePhotographer;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Editor editor;
 

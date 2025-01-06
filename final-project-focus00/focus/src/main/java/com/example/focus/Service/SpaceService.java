@@ -63,6 +63,9 @@ public class SpaceService {
         if (studio == null) {
             throw new ApiException("Studio not found");
         }
+        if(!studio.getStatus().equalsIgnoreCase("active")){
+            throw new ApiException("Studio inActive");
+        }
 
         if (!isValidImageFile(file)) {
             throw new ApiException("Invalid image file. Only JPG, PNG, and JPEG files are allowed");
@@ -201,15 +204,17 @@ public class SpaceService {
 
     public List<SpaceDTO> getAllMySpaces(Integer studio_id){
         Studio studio = studioRepository.findStudioById(studio_id);
-        if(studio == null){
+        if(studio == null) {
             throw new ApiException("studio not found");
         }
-        Set<Space> spaces = studio.getSpaces();
+
+        List<Space> spaces =spaceRepository.findSpaceByStudio(studio);
         List<SpaceDTO> spaceDTOS = new ArrayList<>();
         for (Space space : spaces){
             SpaceDTO spaceDTO = new SpaceDTO();
             spaceDTO.setName(space.getName());
-//            spaceDTO.setArea(space.getArea());
+            spaceDTO.setWidth(space.getWidth());
+            spaceDTO.setLength(space.getLength());
             spaceDTO.setStatus(space.getStatus());
             spaceDTO.setDescription(space.getDescription());
             spaceDTO.setImage(space.getImage());
@@ -227,15 +232,15 @@ public class SpaceService {
 
     }
 
-    public List<SpaceDTO> getMyAvailableSpaces(Integer studio_id){
+    public List<SpaceDTO> getMyAvailableSpaces(Integer studio_id) {
         Studio studio = studioRepository.findStudioById(studio_id);
-        if(studio == null){
+        if (studio == null) {
             throw new ApiException("studio not found");
         }
-        Set<Space> spaces = studio.getSpaces();
+        List<Space> spaces = spaceRepository.findSpaceByStudio(studio);
         List<SpaceDTO> spaceDTOS = new ArrayList<>();
-        for (Space space : spaces){
-            if(space.getStatus().equals("active")){
+        for (Space space : spaces) {
+            if (space.getStatus().equals("Available")) {
                 SpaceDTO spaceDTO = new SpaceDTO();
                 spaceDTO.setName(space.getName());
                 spaceDTO.setLength(space.getLength());
@@ -252,8 +257,10 @@ public class SpaceService {
             }
 
         }
-        throw new ApiException("Not have available space");
-
+        if (spaceDTOS.isEmpty()) {
+            throw new ApiException("Not have available space");
+        }
+        return spaceDTOS;
     }
 
 

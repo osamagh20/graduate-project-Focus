@@ -43,7 +43,6 @@ public class EditorService {
         user.setEmail(editorDTOin.getEmail());
         user.setPassword(editorDTOin.getPassword());
         user.setRole("EDITOR");
-        myUserRepository.save(user);
 
         Editor editor=new Editor();
         editor.setMyUser(user);
@@ -55,7 +54,10 @@ public class EditorService {
         ProfileEditor profileEditor = new ProfileEditor();
         profileEditor.setMyUser(user);
         profileEditor.setNumberOfPosts(0);
+
         profileEditorRepository.save(profileEditor);
+
+        myUserRepository.save(user);
 
     }
 
