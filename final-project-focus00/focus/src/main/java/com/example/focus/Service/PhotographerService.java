@@ -6,8 +6,9 @@ import com.example.focus.DTO.*;
 import com.example.focus.Model.*;
 import com.example.focus.Repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.example.focus.Service.EmailService;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class PhotographerService {
     private final ProfilePhotographerRepository profilePhotographerRepository;
     private final RentToolsRepository rentToolsRepository;
     private final ToolRepository toolRepository;
+    private final EmailService emailService;
     private final StudioRepository studioRepository;
 
 
@@ -34,7 +36,7 @@ public class PhotographerService {
                     photographer.getMyUser().getUsername(),
                     photographer.getMyUser().getEmail(),
                     photographer.getCity(),
-                    photographer.getPhone()
+                    photographer.getPhoneNumber()
             );
             photographerDTOS.add(photographerDTO);
         }
@@ -43,7 +45,7 @@ public class PhotographerService {
 
 
     public void PhotographerRegistration(PhotographerDTOin photographerDTOin) {
-        // String hashPass=new BCryptPasswordEncoder().encode(photographer.getPassword());
+         String hashPass=new BCryptPasswordEncoder().encode(photographerDTOin.getPassword());
 
         MyUser checkUsername =myUserRepository.findMyUserByUsername(photographerDTOin.getUsername());
         MyUser checkEmail =myUserRepository.findMyUserByEmail(photographerDTOin.getEmail());
@@ -57,23 +59,27 @@ public class PhotographerService {
         MyUser user = new MyUser();
         user.setUsername(photographerDTOin.getUsername());
         user.setEmail(photographerDTOin.getEmail());
-        user.setPassword(photographerDTOin.getPassword());
+        user.setPassword(hashPass);
         user.setRole("PHOTOGRAPHER");
-        myUserRepository.save(user);
 
         Photographer photographer=new Photographer();
         photographer.setMyUser(user);
         photographer.setName(photographerDTOin.getName());
         photographer.setCity(photographerDTOin.getCity());
-        photographer.setPhone(photographerDTOin.getPhoneNumber());
+        photographer.setPhoneNumber(photographerDTOin.getPhoneNumber());
 
 
         ProfilePhotographer profilePhotographer = new ProfilePhotographer();
         profilePhotographer.setMyUser(user);
         profilePhotographer.setNumberOfPosts(0);
-        profilePhotographerRepository.save(profilePhotographer);
-        photographerRepository.save(photographer);
-        myUserRepository.save(user);
+
+        if(photographer!=null && profilePhotographer != null && user!=null) {
+
+            profilePhotographerRepository.save(profilePhotographer);
+            photographerRepository.save(photographer);
+            myUserRepository.save(user);
+        }
+
 
     }
 
@@ -86,7 +92,7 @@ public class PhotographerService {
             existingPhotographer.setCity(photographerDTOin.getCity());
             existingPhotographer.getMyUser().setUsername(photographerDTOin.getUsername());
             existingPhotographer.getMyUser().setEmail(photographerDTOin.getEmail());
-            existingPhotographer.setPhone(photographerDTOin.getPhoneNumber());
+            existingPhotographer.setPhoneNumber(photographerDTOin.getPhoneNumber());
         }else {
             throw new ApiException("Photographer Not Found");
         }
@@ -155,6 +161,18 @@ public class PhotographerService {
         rentTools.setRentPrice(totalPrice);
         rentTools.setTool(tool);
         rentToolsRepository.save(rentTools);
+
+        emailService.sendEmail(photographer.getMyUser().getEmail(),
+                "You have successfully rented the tool.",
+                "Dear " + photographer.getName()+",\n\n" +
+                        "We are pleased to inform you that the required tool has been successfully rented.\n" +
+                        "ُTool Name : \n" + tool.getName()+
+                        "ُTool Description : \n" + tool.getDescription()+
+                        "ُTool Model Number : \n" + tool.getModelNumber()+
+                        "ُTool Brand : \n" + tool.getBrand()+
+                        "Best regards,\n" +
+                        "focus Team");
+
 
     }
 

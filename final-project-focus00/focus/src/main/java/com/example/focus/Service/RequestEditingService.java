@@ -78,6 +78,46 @@ public class RequestEditingService {
         }
         return convertToActiveDTO(request);
     }
+    public RequestEditingOutputDTO markAsCompleted(Integer requestId, Integer photographerId) {
+        RequestEditing request = requestEditingRepository.findById(requestId)
+                .orElseThrow(() -> new ApiException("Request not found"));
+
+        if (!request.getPhotographer().getId().equals(photographerId)) {
+            throw new ApiException("You are not authorized to complete this request.");
+        }
+
+        if (!"In Progress".equals(request.getStatus())) {
+            throw new ApiException("Request must be in progress to mark it as completed.");
+        }
+
+        request.setStatus("Completed");
+        requestEditingRepository.save(request);
+
+        return convertToDTO(request);
+    }
+
+    public RequestEditingOutputDTO rateEditor(Integer requestId, Integer photographerId, Integer rating) {
+        RequestEditing request = requestEditingRepository.findById(requestId)
+                .orElseThrow(() -> new ApiException("Request not found"));
+
+        if (!request.getPhotographer().getId().equals(photographerId)) {
+            throw new ApiException("You are not authorized to rate this request.");
+        }
+
+        if (!"Completed".equals(request.getStatus())) {
+            throw new ApiException("Request must be completed to rate the editor.");
+        }
+
+//        if (request.getRating() != null) {
+//            throw new ApiException("This request has already been rated.");
+//        }
+//
+//        request.setRating(rating);
+        requestEditingRepository.save(request);
+
+        return convertToDTO(request);
+    }
+
 
     public RequestEditingOutputDTO createRequest(RequestEditingInputDTO requestInput,Integer editorId,Integer photographerId) {
         if (editorRepository.findEditorById(editorId) == null) {
@@ -96,7 +136,7 @@ public class RequestEditingService {
         request.setKitLens(requestInput.getKitLens());
         request.setViewFinder(requestInput.getViewFinder());
         request.setNativeISO(requestInput.getNativeISO());
-        request.setMedias((Set<Media>) requestInput.getMediaList());
+//        request.setMedias((Set<Media>) requestInput.getMediaList());
         request.setStatus("AwaitingOffer");
         return convertToDTO(requestEditingRepository.save(request));
     }
@@ -110,7 +150,7 @@ public class RequestEditingService {
         request.setKitLens(requestInput.getKitLens());
         request.setViewFinder(requestInput.getViewFinder());
         request.setNativeISO(requestInput.getNativeISO());
-        request.setMedias((Set<Media>) requestInput.getMediaList());
+//        request.set((Set<Media>) requestInput.getMediaList());
         return convertToDTO(requestEditingRepository.save(request));
     }
 
@@ -164,10 +204,10 @@ public class RequestEditingService {
     private RequestEditingActiveDTO convertToActiveDTO(RequestEditing request) {
         RequestEditingActiveDTO dto = new RequestEditingActiveDTO();
         ArrayList<MediaDTO>mediaDTOS=new ArrayList<>();
-        for (Media media : request.getMedias()) {
-            MediaDTO mediaDTO=new MediaDTO(media.getMediaType(),media.getMediaURL(),media.getUploadDate());
-            mediaDTOS.add(mediaDTO);
-                   }
+//        for (Media media : request.getMedias()) {
+//            MediaDTO mediaDTO=new MediaDTO(media.getMediaType(),media.getMediaURL(),media.getUploadDate());
+//            mediaDTOS.add(mediaDTO);
+//        }
         dto.setEstimatedCompletionDate(request.getEstimatedCompletionDate());
         dto.setDescription(request.getDescription());
         dto.setFullCameraName(request.getFullCameraName());

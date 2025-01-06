@@ -5,11 +5,13 @@ import com.example.focus.ApiResponse.ApiResponse;
 import com.example.focus.DTO.ProfileDTO;
 import com.example.focus.DTO.ProfileDTOin;
 import com.example.focus.DTO.ToolDTOIn;
+import com.example.focus.Model.MyUser;
 import com.example.focus.Service.ProfilePhotographerService;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,33 +28,33 @@ public class ProfilePhotographerController {
     public  ResponseEntity getAllProfilePhotographer(){
        return ResponseEntity.status(200).body(profilePhotographerService.getAllProfiles()) ;
     }
-
-    @GetMapping("/get-my-profile/{id}")
-    public ResponseEntity getMyProfilePhotographer(@PathVariable Integer id){
-        return ResponseEntity.status(200).body(profilePhotographerService.getMyProfile(id));
+    //photographer
+    @GetMapping("/get-my-profile")
+    public ResponseEntity getMyProfilePhotographer(@AuthenticationPrincipal MyUser myUser){
+        return ResponseEntity.status(200).body(profilePhotographerService.getMyProfile(myUser.getId()));
     }
-
+    //all
     @GetMapping("/get-specific-profile/{id}")
-    public ResponseEntity getSpecificProfilePhotographer(@PathVariable Integer user1, @PathVariable Integer user2){
-        return ResponseEntity.status(200).body(profilePhotographerService.getSpecificProfile(user1,user2));
+    public ResponseEntity getSpecificProfilePhotographer(@PathVariable Integer id,  @AuthenticationPrincipal MyUser myUser){
+        return ResponseEntity.status(200).body(profilePhotographerService.getSpecificProfile(myUser.getId(),id));
     }
-
-
-    @PostMapping("/upload-media/{id}")
-    public ResponseEntity uploadMedia(@PathVariable Integer id, @RequestParam("file") MultipartFile file) {
+    //photographer
+    @PostMapping("/upload-media")
+    public ResponseEntity uploadMedia( @AuthenticationPrincipal MyUser myUser, @RequestParam("file") MultipartFile file) {
         try {
-            profilePhotographerService.uploadMedia(id,file);
+            profilePhotographerService.uploadMedia(myUser.getId(),file);
 
         }  catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the file.");
         }
         return ResponseEntity.status(200).body(new ApiResponse("Upload successful."));
     }
-
+    //photographer
     @PutMapping("/update/{id}")
-    public ResponseEntity updateProfile(@PathVariable Integer id, @ModelAttribute @Valid ProfileDTOin profileDTOin, @RequestParam("file") MultipartFile file){
+    public ResponseEntity updateProfile( @AuthenticationPrincipal MyUser myUser, @ModelAttribute @Valid ProfileDTOin profileDTOin,
+                                         @RequestParam("file") MultipartFile file){
         try {
-            profilePhotographerService.updateProfile(id,profileDTOin,file);
+            profilePhotographerService.updateProfile(myUser.getId(),profileDTOin,file);
 
         }  catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the file.");

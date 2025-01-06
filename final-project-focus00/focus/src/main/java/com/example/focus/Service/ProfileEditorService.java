@@ -30,17 +30,6 @@ public class ProfileEditorService {
 
     public List<ProfileEditor> getAllProfiles() {
         List<ProfileEditor> profiles = profileEditorRepository.findAll();
-        //List<ProfileDTO> profileDTOs = new ArrayList<>();
-
-//        for (ProfilePhotographer profilePhotographer : profiles) {
-//            ProfileDTO profileDTO = new ProfileDTO(
-//                    profilePhotographer.getDescription(),
-//                    profilePhotographer.getNumberOfPosts(),
-//                    profilePhotographer.getImage()
-//            );
-//            profileDTOs.add(profileDTO);
-//        }
-//        return profileDTOs;r
 
         return profiles;
     }
@@ -53,17 +42,7 @@ public class ProfileEditorService {
         if(profile == null) {
             throw new ApiException("Editor not found");
         }
-        //List<ProfileDTO> profileDTOs = new ArrayList<>();
 
-//        for (ProfilePhotographer profilePhotographer : profiles) {
-//            ProfileDTO profileDTO = new ProfileDTO(
-//                    profilePhotographer.getDescription(),
-//                    profilePhotographer.getNumberOfPosts(),
-//                    profilePhotographer.getImage()
-//            );
-//            profileDTOs.add(profileDTO);
-//        }
-//        return profileDTOs;
 
         return profile;
     }
@@ -74,25 +53,11 @@ public class ProfileEditorService {
         if(profile == null) {
             throw new ApiException("Editor not found");
         }
-        //List<ProfileDTO> profileDTOs = new ArrayList<>();
 
-//        for (ProfilePhotographer profilePhotographer : profiles) {
-//            ProfileDTO profileDTO = new ProfileDTO(
-//                    profilePhotographer.getDescription(),
-//                    profilePhotographer.getNumberOfPosts(),
-//                    profilePhotographer.getImage()
-//            );
-//            profileDTOs.add(profileDTO);
-//        }
-//        return profileDTOs;
 
         return profile;
     }
 
-
-//    public void addProfile(ProfileEditor profile) {
-//        profileEditorRepository.save(profile);
-//    }
 
     private  final String UPLOAD_PROFILE_DIR = "C:/Users/doly/Desktop/Upload/Profile/";
     public void updateProfile(Integer id, ProfileDTOin profileDTOin, MultipartFile file) throws IOException{

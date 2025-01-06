@@ -25,6 +25,7 @@ public class BookSpace {
     @ManyToOne
     @JoinColumn(name = "space_id", nullable = false)
     private Space space;
+
     @Column(nullable = false)
     private Double bookingPrice;
 

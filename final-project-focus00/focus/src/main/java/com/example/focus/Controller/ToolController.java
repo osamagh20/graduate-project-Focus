@@ -4,12 +4,14 @@ import com.example.focus.ApiResponse.ApiResponse;
 import com.example.focus.DTO.RentToolsDTOIn;
 import com.example.focus.DTO.ToolDTO;
 import com.example.focus.DTO.ToolDTOIn;
+import com.example.focus.Model.MyUser;
 import com.example.focus.Model.Tool;
 import com.example.focus.Service.PhotographerService;
 import com.example.focus.Service.ToolService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -28,10 +30,11 @@ public class ToolController {
         return ResponseEntity.status(200).body(tools);
     }
 
-    @PostMapping("/add-tool/{photographer_id}")
-    public ResponseEntity addTool(@PathVariable Integer photographer_id, @ModelAttribute  ToolDTOIn toolDTOIn,@RequestParam("file") MultipartFile file ) {
+    @PostMapping("/add-tool")
+    public ResponseEntity addTool(@AuthenticationPrincipal MyUser myUser, @ModelAttribute  ToolDTOIn toolDTOIn,
+                                  @RequestParam("file") MultipartFile file ) {
         try {
-            toolService.addTool(photographer_id,toolDTOIn,file);
+            toolService.addTool(myUser.getId(),toolDTOIn,file);
 
         }  catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the file.");
@@ -41,9 +44,10 @@ public class ToolController {
 
     // need to media file
     @PutMapping("/update-tool/{photographer_id}/{tool_id}")
-    public ResponseEntity updateTool(@PathVariable Integer photographer_id,@PathVariable Integer tool_id,  @ModelAttribute  ToolDTOIn toolDTOIn,@RequestParam("file") MultipartFile file) {
+    public ResponseEntity updateTool(@AuthenticationPrincipal MyUser myUser,@PathVariable Integer tool_id,
+                                     @ModelAttribute  ToolDTOIn toolDTOIn,@RequestParam("file") MultipartFile file) {
         try {
-            toolService.updateTool(photographer_id,tool_id,toolDTOIn,file);
+            toolService.updateTool(myUser.getId(),tool_id,toolDTOIn,file);
 
         }  catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the file.");
@@ -51,15 +55,16 @@ public class ToolController {
         return ResponseEntity.status(200).body(new ApiResponse("Tool updated successfully"));
     }
 
-    @DeleteMapping("/delete-tool/photographerid/{photographer_id}/toolid/{tool_id}")
-    public ResponseEntity<ApiResponse> deleteTool(@PathVariable Integer photographer_id,@PathVariable Integer tool_id) {
-        toolService.deleteTool(photographer_id,tool_id);
+    @DeleteMapping("/delete-tool/photographerid/toolid/{tool_id}")
+    public ResponseEntity<ApiResponse> deleteTool(@AuthenticationPrincipal MyUser myUser,@PathVariable Integer tool_id) {
+        toolService.deleteTool(myUser.getId(),tool_id);
         return ResponseEntity.status(200).body(new ApiResponse("Tool deleted successfully"));
     }
 
-    @PostMapping("/rent-tool/{photographer_id}/{tool_id}")
-    public ResponseEntity rentToolRequest(@PathVariable Integer photographer_id,@PathVariable Integer tool_id,@RequestBody @Valid RentToolsDTOIn rentToolsDTOIn){
-        photographerService.rentToolRequest(photographer_id,tool_id,rentToolsDTOIn);
+    @PostMapping("/rent-tool/{tool_id}")
+    public ResponseEntity rentToolRequest(@AuthenticationPrincipal MyUser myUser,@PathVariable Integer tool_id,
+                                          @RequestBody @Valid RentToolsDTOIn rentToolsDTOIn){
+        photographerService.rentToolRequest(myUser.getId(),tool_id,rentToolsDTOIn);
         return ResponseEntity.status(200).body(new ApiResponse("Tool rent request success"));
     }
 
@@ -81,15 +86,15 @@ public class ToolController {
         return ResponseEntity.status(200).body(tools);
     }
 
-    @GetMapping("/get-my-tools/{photographer_id}")
-    public ResponseEntity getMyTools(@PathVariable Integer photographer_id) {
-        List<ToolDTO> tools = toolService.getMyTools(photographer_id);
+    @GetMapping("/get-my-tools")
+    public ResponseEntity getMyTools(@AuthenticationPrincipal MyUser myUser) {
+        List<ToolDTO> tools = toolService.getMyTools(myUser.getId());
         return ResponseEntity.status(200).body(tools);
     }
 
-    @GetMapping("/get-photographer-tools/{photographer_id}/{photographer_id2}")
-    public ResponseEntity getPhotographerTools(@PathVariable Integer photographer_id,@PathVariable Integer photographer_id2) {
-        List<ToolDTO> tools = toolService.getPhotographerTools(photographer_id,photographer_id2);
+    @GetMapping("/get-photographer-tools/{photographer_id2}")
+    public ResponseEntity getPhotographerTools(@AuthenticationPrincipal MyUser myUser,@PathVariable Integer photographer_id2) {
+        List<ToolDTO> tools = toolService.getPhotographerTools(myUser.getId(),photographer_id2);
         return ResponseEntity.status(200).body(tools);
     }
 }

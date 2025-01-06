@@ -28,6 +28,7 @@ public class StudioService {
     private final PhotographerRepository photographerRepository;
     private final SpaceRepository spaceRepository;
     private final ProfileStudioRepository profileStudioRepository;
+    private final EmailService emailService;
     //  private final BookSpaceRepository bookSpaceRepository;
 
     public List<StudioDTO> getAllStudios(){
@@ -75,11 +76,22 @@ public class StudioService {
         studio.setAddress(studioDTOIn.getAddress());
         studio.setStatus("Inactive");
 
-        studioRepository.save(studio);
-        myUserRepository.save(user);
+        if(studio!=null && user != null) {
+            studioRepository.save(studio);
+            myUserRepository.save(user);
+
+            emailService.sendEmail(studio.getMyUser().getEmail(),
+                    "Welcome to Focus !",
+                    "Dear " + studio.getName() + ",\n\n" +
+                            "Congratulations! Your studio has been successfully activated.\n" +
+                            "We are thrilled to have you on board and excited to see your work. " +
+                            "You can now log in and start your journey with us.\n\n" +
+                            "Best regards,\n" +
+                            "focus Team");
+        }
 
 
-       // profileStudioRepository.save(profileStudio);
+
 
     }
 
@@ -94,6 +106,15 @@ public class StudioService {
         }
         studio.setStatus("active");
         studioRepository.save(studio);
+        //String to, String subject, String body
+        emailService.sendEmail(studio.getMyUser().getEmail(),
+                "Welcome To Focus Team",
+                "Hello "+studio.getName()+
+                        ",\n We are Happy To tell you your studio has been activated,\n you van login and start your journey\n" +
+                        "\"Best regards,\\n\" +\n" +
+                        "\"The Team\"");
+
+
     }
 
     public void rejectStudio(Integer admin_id,Integer studio_id){
@@ -107,6 +128,15 @@ public class StudioService {
         }
         studio.setStatus("rejected");
         studioRepository.save(studio);
+//to,subject,body
+        emailService.sendEmail(studio.getMyUser().getEmail(),
+                "Sorry your studio was rejected",
+                "Dear " + studio.getName() + ",\n\n" +
+                        "We regret to inform you that your studio has been rejected.\n" +
+                        "If you have any questions, please feel free to contact us.\n\n" +
+                        "Best regards,\n" +
+                        "focus Team");
+
     }
 
 
@@ -243,11 +273,8 @@ public class StudioService {
     }
 
 
-    public List<StudioDTOPhotographer> getStudiosByCity(Integer photographer_id, String city) {
-        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
-        if(photographer==null) {
-            throw new ApiException("photographer not found");
-        }
+    public List<StudioDTOPhotographer> getStudiosByCity(String city) {
+
 
         List<Studio> studios = studioRepository.findStudioByCity(city);
         if(studios.isEmpty()) {
@@ -270,11 +297,9 @@ public class StudioService {
 
     }
 
-    public StudioDTOPhotographer getSpecificStudio(Integer photographer_id,Integer studio_id) {
-        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
-        if(photographer==null) {
-            throw new ApiException("photographer not found");
-        }
+    public StudioDTOPhotographer getSpecificStudio(Integer studio_id) {
+
+
         Studio studio = studioRepository.findStudioById(studio_id);
         if(studio==null) {
             throw new ApiException("studio not found");

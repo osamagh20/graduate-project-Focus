@@ -18,29 +18,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MediaController {
     private final MediaService mediaService;
-//
-//   //  إرجاع عدد الفيديوهات لمصور معين
+
+    //primitive all
     @GetMapping("/photographer/count-video/{photographerId}")
     public ResponseEntity<Integer> getVideoCountByPhotographer(@PathVariable Integer photographerId) {
         Integer count = mediaService.getVideoCountByPhotographer(photographerId);
         return ResponseEntity.ok(count);
     }
-//
-//    // إرجاع عدد الصور لمصور معين
+
+    //primitive all
     @GetMapping("/photographer/count-image/{photographerId}")
     public ResponseEntity getImageCountByPhotographer(@PathVariable Integer photographerId) {
         Integer count = mediaService.getImageCountByPhotographer(photographerId);
         return ResponseEntity.ok(count);
     }
 
-//    // إرجاع الفيديوهات فقط لمصور معين
+    //primitive all
     @GetMapping("/photographer/get-videos/{photographerId}")
     public ResponseEntity getVideosByPhotographer(@PathVariable Integer photographerId) {
         List<MediaDTO> videos = mediaService.getVideosByPhotographer(photographerId);
         return ResponseEntity.ok(videos);
     }
-//
-//    // إرجاع الصور فقط لمصور معين
+// //primitive all
     @GetMapping("/photographer/get-images/{photographerId}")
     public ResponseEntity getImagesByPhotographer(@PathVariable Integer photographerId) {
         List<MediaDTO> images = mediaService.getImagesByPhotographer(photographerId);
@@ -50,28 +49,28 @@ public class MediaController {
 //
 //
 //    //**************************Editor
-//    // إرجاع عدد الفيديوهات editor معين
+//primitive all
     @GetMapping("/editor/count-video/{editorId}")
     public ResponseEntity<Integer> getVideoCountByEditor(@PathVariable Integer editorId) {
         Integer count = mediaService.getVideoCountByEditor(editorId);
         return ResponseEntity.ok(count);
     }
 //
-//    // إرجاع عدد الصور editor معين
+//primitive all
     @GetMapping("/editor/count-image/{editorId}")
     public ResponseEntity getImageCountByEditor(@PathVariable Integer editorId) {
         Integer count = mediaService.getImageCountByEditor(editorId);
         return ResponseEntity.ok(count);
     }
 
-//    // إرجاع الفيديوهات فقط editor معين
+    //primitive all
     @GetMapping("/editor/get-videos/{editorId}")
     public ResponseEntity getVideosByEditor(@PathVariable Integer editorId) {
         List<MediaDTO> videos = mediaService.getVideosByEditor(editorId);
         return ResponseEntity.ok(videos);
     }
 
-    // إرجاع الصور فقط editor معين
+    //primitive all
     @GetMapping("/editor/get-images/{editorid}/")
     public ResponseEntity getImagesByEditor(@PathVariable Integer editorid) {
         List<MediaDTO> images = mediaService.getImagesByEditor(editorid);

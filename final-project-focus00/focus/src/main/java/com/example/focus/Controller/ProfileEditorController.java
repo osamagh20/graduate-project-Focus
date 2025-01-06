@@ -3,11 +3,13 @@ package com.example.focus.Controller;
 
 import com.example.focus.ApiResponse.ApiResponse;
 import com.example.focus.DTO.ProfileDTOin;
+import com.example.focus.Model.MyUser;
 import com.example.focus.Service.ProfileEditorService;
 import com.example.focus.Service.ProfilePhotographerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,9 +28,9 @@ public class ProfileEditorController {
         return ResponseEntity.status(200).body(profileEditorService.getAllProfiles()) ;
     }
 
-    @GetMapping("/get-my-profile/{id}")
-    public ResponseEntity getMyProfileEditor(@PathVariable Integer id){
-        return ResponseEntity.status(200).body(profileEditorService.getMyProfile(id));
+    @GetMapping("/get-my-profile")
+    public ResponseEntity getMyProfileEditor(@AuthenticationPrincipal MyUser myUser){
+        return ResponseEntity.status(200).body(profileEditorService.getMyProfile(myUser.getId()));
     }
 
     @GetMapping("/get-specific-profile/{id}")
@@ -37,10 +39,10 @@ public class ProfileEditorController {
     }
 
 
-    @PostMapping("/upload-media/{id}")
-    public ResponseEntity uploadMedia(@PathVariable Integer id, @RequestParam("file") MultipartFile file) {
+    @PostMapping("/upload-media")
+    public ResponseEntity uploadMedia(@AuthenticationPrincipal MyUser myUser, @RequestParam("file") MultipartFile file) {
         try {
-            profileEditorService.uploadMediaProfile(id,file);
+            profileEditorService.uploadMediaProfile(myUser.getId(),file);
 
         }  catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the file.");
@@ -49,10 +51,10 @@ public class ProfileEditorController {
     }
 
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity updateProfile(@PathVariable Integer id, @ModelAttribute @Valid ProfileDTOin profileDTOin, @RequestParam("file") MultipartFile file){
+    @PutMapping("/update")
+    public ResponseEntity updateProfile(@AuthenticationPrincipal MyUser myUser, @ModelAttribute @Valid ProfileDTOin profileDTOin, @RequestParam("file") MultipartFile file){
         try {
-            profileEditorService.updateProfile(id,profileDTOin,file);
+            profileEditorService.updateProfile(myUser.getId(),profileDTOin,file);
 
         }  catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the file.");

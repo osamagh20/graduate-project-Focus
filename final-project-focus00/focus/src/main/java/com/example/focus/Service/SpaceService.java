@@ -225,6 +225,8 @@ public class SpaceService {
             spaceDTOS.add(spaceDTO);
 
         }
+
+
         if (spaceDTOS.isEmpty()){
             throw new ApiException("Not have any space");
         }

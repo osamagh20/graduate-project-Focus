@@ -27,7 +27,7 @@ public class Photographer {
     private String city;
     @Pattern(regexp = "^05[0-9]{8}$", message = "Phone number must start with 05 and be followed by 8 digits")
     @Column(columnDefinition = "varchar(20) not null")
-    private String phone;
+    private String phoneNumber;
 
     @OneToOne
     @MapsId

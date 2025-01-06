@@ -25,6 +25,8 @@ import java.util.Set;
 public class ToolService {
     private final ToolRepository toolRepository;
     private final PhotographerRepository photographerRepository;
+    private final EmailService emailService;
+
 
     public List<ToolDTO> getAllTools() {
         List<Tool> tools = toolRepository.findAll();
@@ -90,7 +92,7 @@ public class ToolService {
     }
 
 
-    // need media file
+
     public void updateTool(Integer photographer_id,Integer tool_id, ToolDTOIn tool,MultipartFile file)throws IOException{
         Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
         if(photographer==null) {
@@ -279,40 +281,6 @@ public class ToolService {
         return toolDTOS;
     }
 
-
-
-
-
-//    public void addTool(Tool tool, Integer photographerId) {
-//        Photographer photographer = photographerRepository.findPhotographersById(photographerId);
-//        if (photographer != null) {
-//            tool.setPhotographer(photographer);
-//            toolRepository.save(tool);
-//        } else {
-//            throw new ApiException("Photographer not found");
-//        }
-//    }
-
-
-//    public void updateTool(Integer photographer_id,Integer tool_id, ToolDTOIn tool) {
-//        Photographer photographer = photographerRepository.findPhotographersById(photographer_id);
-//        if(photographer==null) {
-//            throw new ApiException("Photographer Not Found");
-//        }
-//        Tool existingTool = toolRepository.findToolById(tool_id);
-//        if (existingTool != null) {
-//            existingTool.setName(tool.getName());
-//            existingTool.setDescription(tool.getDescription());
-//            existingTool.setCategory(tool.getCategory());
-//            existingTool.setBrand(tool.getBrand());
-//            existingTool.setToolCondition(tool.getToolCondition());
-//            existingTool.setRentalPrice(tool.getRentalPrice());
-//            existingTool.setImageURL(tool.getImageURL());
-//            toolRepository.save(existingTool);
-//        } else {
-//            throw new ApiException("Tool not found");
-//        }
-//    }
 
 
     public void deleteTool(Integer photographer_id,Integer tool_id) {

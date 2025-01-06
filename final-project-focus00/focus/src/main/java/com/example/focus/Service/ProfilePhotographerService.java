@@ -1,6 +1,7 @@
 package com.example.focus.Service;
 
 import com.example.focus.ApiResponse.ApiException;
+import com.example.focus.DTO.PhotographerDTO;
 import com.example.focus.DTO.ProfileDTO;
 import com.example.focus.DTO.ProfileDTOin;
 import com.example.focus.Model.Media;
@@ -35,18 +36,6 @@ public class ProfilePhotographerService {
 
     public List<ProfilePhotographer> getAllProfiles() {
         List<ProfilePhotographer> profiles = profilePhotographerRepository.findAll();
-        //List<ProfileDTO> profileDTOs = new ArrayList<>();
-
-//        for (ProfilePhotographer profilePhotographer : profiles) {
-//            ProfileDTO profileDTO = new ProfileDTO(
-//                    profilePhotographer.getDescription(),
-//                    profilePhotographer.getNumberOfPosts(),
-//                    profilePhotographer.getImage()
-//            );
-//            profileDTOs.add(profileDTO);
-//        }
-//        return profileDTOs;
-
         return profiles;
     }
 
@@ -58,17 +47,6 @@ public class ProfilePhotographerService {
         if(profile == null) {
             throw new ApiException("Photographer not found");
         }
-        //List<ProfileDTO> profileDTOs = new ArrayList<>();
-
-//        for (ProfilePhotographer profilePhotographer : profiles) {
-//            ProfileDTO profileDTO = new ProfileDTO(
-//                    profilePhotographer.getDescription(),
-//                    profilePhotographer.getNumberOfPosts(),
-//                    profilePhotographer.getImage()
-//            );
-//            profileDTOs.add(profileDTO);
-//        }
-//        return profileDTOs;
 
         return profile;
     }
@@ -87,17 +65,7 @@ public class ProfilePhotographerService {
             ProfilePhotographer profilePhotographer = profilePhotographerRepository.findProfilePhotographerById(userid2);
 
         return profilePhotographer;
-        //List<ProfileDTO> profileDTOs = new ArrayList<>();
 
-//        for (ProfilePhotographer profilePhotographer : profiles) {
-//            ProfileDTO profileDTO = new ProfileDTO(
-//                    profilePhotographer.getDescription(),
-//                    profilePhotographer.getNumberOfPosts(),
-//                    profilePhotographer.getImage()
-//            );
-//            profileDTOs.add(profileDTO);
-//        }
-//        return profileDTOs;
     }
 
 

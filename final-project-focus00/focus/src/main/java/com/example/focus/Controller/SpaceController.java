@@ -4,10 +4,12 @@ import com.example.focus.ApiResponse.ApiResponse;
 import com.example.focus.DTO.SpaceDTO;
 import com.example.focus.DTO.SpaceDTOIn;
 import com.example.focus.DTO.ToolDTOIn;
+import com.example.focus.Model.MyUser;
 import com.example.focus.Service.SpaceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,10 +28,11 @@ public class SpaceController {
     }
 
 
-    @PostMapping("/create-space/{studioid}")
-    public ResponseEntity createSpace(@PathVariable Integer studioid , @ModelAttribute SpaceDTOIn spaceDTOIn, @RequestParam("file") MultipartFile file){
+    @PostMapping("/create-space")
+    public ResponseEntity createSpace( @ModelAttribute SpaceDTOIn spaceDTOIn,
+                                      @RequestParam("file") MultipartFile file,@AuthenticationPrincipal MyUser myUser){
     try {
-        spaceService.createSpace(studioid,spaceDTOIn,file);
+        spaceService.createSpace(myUser.getId(),spaceDTOIn,file);
 
     }  catch (IOException e) {
         return ResponseEntity.status(500).body("Error occurred while uploading the file.");
@@ -38,10 +41,11 @@ public class SpaceController {
     }
 
 
-    @PutMapping("/update-my-space/{studioid}")
-    public ResponseEntity UpdateSpace(@PathVariable Integer studioid , @ModelAttribute SpaceDTOIn spaceDTOIn, @RequestParam("file") MultipartFile file){
+    @PutMapping("/update-my-space")
+    public ResponseEntity UpdateSpace(@ModelAttribute SpaceDTOIn spaceDTOIn,
+                                      @RequestParam("file") MultipartFile file,@AuthenticationPrincipal MyUser myUser){
         try {
-            spaceService.updateSpace(studioid,spaceDTOIn,file);
+            spaceService.updateSpace(myUser.getId(),spaceDTOIn,file);
 
         }  catch (IOException e) {
             return ResponseEntity.status(500).body("Error occurred while uploading the file.");
@@ -55,9 +59,9 @@ public class SpaceController {
         return ResponseEntity.status(200).body(spaceDTOS);
     }
 
-    @GetMapping("/get-my-spaces/{studio_id}")
-    public ResponseEntity getAllMySpaces(@PathVariable Integer studio_id){
-        List<SpaceDTO> spaceDTOS = spaceService.getAllMySpaces(studio_id);
+    @GetMapping("/get-my-spaces")
+    public ResponseEntity getAllMySpaces(@AuthenticationPrincipal MyUser myUser){
+        List<SpaceDTO> spaceDTOS = spaceService.getAllMySpaces(myUser.getId());
         return ResponseEntity.status(200).body(spaceDTOS);
     }
 
