@@ -150,7 +150,6 @@ I have also i have done this extra :
  - getAllSpaces
  - viewRentalTools
  - viewMyRentTools
- - PhotographerRegistration
  - ActivateStudio
  - rejectStudio
 
