@@ -153,4 +153,46 @@ I have also i have done this extra :
  - ActivateStudio
  - rejectStudio
 
+### AdminController
+
+1. **PUT** `/api/v1/focus/admin/activate-studio/{studio_id}`  
+   - Activate a studio account.  
+2. **PUT** `/api/v1/focus/admin/reject-studio/{studio_id}`  
+   - Reject a studio account.
+
+### PhotographerController : 
+1. **GET** `/api/v1/focus/photographer/get-my-rent-tools`  
+   - View rented tools.  
+2. **GET** `/api/v1/focus/photographer/get-my-rental-tools`  
+   - View tools rented out.
+  
+### SpaceController
+
+1. **GET** `/api/v1/focus/space/get-all-spaces`  
+   - Retrieve all spaces.
+
+### StudioController
+
+1. **GET** `/api/v1/focus/studio/get-studio-by-city/{city}`  
+   - Retrieve studios by city.  
+2. **GET** `/api/v1/focus/studio/get-specific-studio/{studio_id}`  
+   - Retrieve specific studio details by ID.
+   
+### ToolController
+
+1. **POST** `/api/v1/focus/tool/add-tool`  
+   - Add a new tool.  
+2. **POST** `/api/v1/focus/tool/rent-tool/{tool_id}`  
+   - Rent a tool.  
+3. **GET** `/api/v1/focus/tool/get-tools-by-rental-number/{numberOfRental}`  
+   - Retrieve tools by number of rentals.  
+4. **GET** `/api/v1/focus/tool/get-tools-by-rental-number-or-above/{numberOfRental}`  
+   - Retrieve tools with rental numbers equal to or above a value.  
+5. **GET** `/api/v1/focus/tool/get-tools-by-rental-number-or-below/{numberOfRental}`  
+   - Retrieve tools with rental numbers equal to or below a value.  
+6. **GET** `/api/v1/focus/tool/get-my-tools`  
+   - Retrieve tools owned by the user.  
+7. **GET** `/api/v1/focus/tool/get-photographer-tools/{photographer_id}`  
+    - Retrieve tools owned by a specific photographer.
+
 
