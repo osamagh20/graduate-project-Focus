@@ -203,4 +203,6 @@ I have also i have done this extra :
 
 
 
-Linked in : ![Osama Alghamdi]([https://github.com/user-attachments/assets/3fde31ab-ad29-433b-8449-c22e9e397d18](https://www.linkedin.com/in/profileosamaghamdi2022/))
+## LinkedIn 
+[![Osama Alghamdi](https://github.com/user-attachments/assets/3fde31ab-ad29-433b-8449-c22e9e397d18)](https://www.linkedin.com/in/profileosamaghamdi2022/)
+
