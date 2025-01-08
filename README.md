@@ -135,7 +135,13 @@ Focus aims to streamline workflows, making it easier for photographers to access
 
 
   MY work on the Project 
-I have Make the Photographer,Tool,RentTool,match CRUD and Models and Controller and Services and DTO and Repositories . 
+I have Make the  : Photographer,Tool,RentTool :-
+- CRUD
+- Models
+- Controller
+- Services
+- DTO
+- Repositories .
 
 I have also i have done this extra : 
  - rentToolRequest
@@ -196,3 +202,5 @@ I have also i have done this extra :
     - Retrieve tools owned by a specific photographer.
 
 
+
+Linked in : ![Bushra Ali Arishi]([https://github.com/user-attachments/assets/3fde31ab-ad29-433b-8449-c22e9e397d18](https://www.linkedin.com/in/profileosamaghamdi2022/))
