@@ -204,6 +204,6 @@ I have also i have done this extra :
 
 
 ## LinkedIn 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Profile-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/profileosamaghamdi2022/)
+[![Osama Alghamdi](https://img.shields.io/badge/LinkedIn-Profile-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/profileosamaghamdi2022/)
 
 
