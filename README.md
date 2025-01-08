@@ -203,4 +203,4 @@ I have also i have done this extra :
 
 
 
-Linked in : ![Bushra Ali Arishi]([https://github.com/user-attachments/assets/3fde31ab-ad29-433b-8449-c22e9e397d18](https://www.linkedin.com/in/profileosamaghamdi2022/))
+Linked in : ![Osama Alghamdi]([https://github.com/user-attachments/assets/3fde31ab-ad29-433b-8449-c22e9e397d18](https://www.linkedin.com/in/profileosamaghamdi2022/))
